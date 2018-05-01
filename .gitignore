@@ -1,0 +1,7 @@
+doc
+.yardoc
+spec/support/repos/*
+!*.git.tar.gz
+spec/examples.txt
+tmp
+pkg
