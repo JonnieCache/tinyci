@@ -10,6 +10,8 @@ TinyCI
 
 A minimal Continuous Integration system, written in ruby, powered by git. MIT licensed.
 
+RDoc documentation is available at [rubydoc.org](https://www.rubydoc.info/gems/tinyci)
+
 ### Motivation
 
 Existing CI solutions like [Travis](https://travis-ci.org) and [Jenkins](https://jenkins.io) run as daemons requiring large amounts of RAM, typically in their own virtual machines. A more lightweight system was desired, for use with small scale personal projects.
