@@ -14,7 +14,9 @@ RDoc documentation is available at [rubydoc.org](https://www.rubydoc.info/gems/t
 
 ### Motivation
 
-Existing CI solutions like [Travis](https://travis-ci.org) and [Jenkins](https://jenkins.io) run as daemons requiring large amounts of RAM, typically in their own virtual machines. A more lightweight system was desired, for use with small scale personal projects.
+Existing CI solutions like [Travis](https://travis-ci.org) and [Jenkins](https://jenkins.io) run as daemons requiring large amounts of RAM, typically in their own virtual machines. In particular Travis and systems like it are designed as SaaS products, and it's not really feasible to self-host them.
+
+A more lightweight system was desired, for use with small scale personal projects.
 
 ### Architecture
 
