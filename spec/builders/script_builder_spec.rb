@@ -10,7 +10,7 @@ RSpec.describe TinyCI::Builders::ScriptBuilder do
   end
   
   it 'runs the right command' do
-    expect(builder).to receive(:execute_stream).with('test-target/test-command', label: 'build', pwd: 'test-target')
+    expect(builder).to receive(:execute_stream).with(["/bin/sh", "-c", "'test-command'"], label: 'build', pwd: 'test-target')
 
     builder.build
   end

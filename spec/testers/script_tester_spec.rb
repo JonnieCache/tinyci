@@ -10,7 +10,7 @@ RSpec.describe TinyCI::Testers::ScriptTester do
   end
   
   it 'runs the right command' do
-    expect(tester).to receive(:execute_stream).with('test-target/test-command', label: 'test', pwd: 'test-target')
+    expect(tester).to receive(:execute_stream).with(["/bin/sh", "-c", "'test-command'"], label: 'test', pwd: 'test-target')
 
     tester.test
   end

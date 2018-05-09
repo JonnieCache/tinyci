@@ -17,5 +17,12 @@ module TinyCI
       @config = config
       @logger = logger
     end
+    
+    private
+    
+    def script_location
+      # path = File.join @config[:target], @config[:command]
+      ['/bin/sh', '-c', "'#{@config[:command]}'"]
+    end
   end
 end
