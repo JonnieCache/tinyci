@@ -51,7 +51,7 @@ module TinyCI
     end
     
     # Synchronously execute a command as a subprocess and and stream the output
-    # asynchronously to `STDOUT`
+    # to `STDOUT`
     # 
     # @param [Array<String>] command The command line
     # @param [String] label A label for debug and logging purposes
@@ -66,11 +66,10 @@ module TinyCI
       Open3.popen2e(command.join(' '), opts) do |stdin, stdout_and_stderr, wait_thr|
         stdin.close
         
-        Thread.new do
-          stdout_and_stderr.each_line do |l|
-            log_info l.chomp
-            $stdout.flush
-          end
+        until stdout_and_stderr.closed? || stdout_and_stderr.eof?
+          line = stdout_and_stderr.gets
+          log_info line.chomp
+          $stdout.flush
         end
         
         unless wait_thr.value.success?  
