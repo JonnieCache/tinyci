@@ -11,6 +11,7 @@ require 'tinyci/testers/rkt_tester'
 
 require 'tinyci/builders/script_builder'
 require 'tinyci/testers/script_tester'
+require 'tinyci/hookers/script_hooker'
 
 require 'fileutils'
 
@@ -24,7 +25,7 @@ module TinyCI
     include GitUtils
     include Logging
     
-    attr_accessor :builder, :tester
+    attr_accessor :builder, :tester, :hooker
     
     # Constructor, allows injection of generic configuration params.
     # 
@@ -69,28 +70,76 @@ module TinyCI
         end
         @builder ||= instantiate_builder
         @tester  ||= instantiate_tester
+        @hooker  ||= instantiate_hooker
         
         log_info "Building..."
-        @builder.build
-        
-        log_info "Testing..."
-        @tester.test
-        
-        log_info "Finished #{@commit}"
-      rescue => e
+        run_hook! :before_build
+        begin
+          @builder.build
+          run_hook! :after_build_success
+        rescue => e
+          run_hook! :after_build_failure
+          
           raise e if ENV['TINYCI_ENV'] == 'test'
           
           log_error e
           log_error e.backtrace
+          
+          return false
+        ensure
+          run_hook! :after_build
+        end
+        
+        
+        log_info "Testing..."
+        run_hook! :before_test
+        begin
+          @tester.test
+        rescue => e
+          run_hook! :after_test_failure
+          
+          raise e if ENV['TINYCI_ENV'] == 'test'
+          
+          log_error e
+          log_error e.backtrace
+          
+          return false
+        ensure
+          run_hook! :after_test
+        end
+        
+        run_hook! :after_test_success
+        
+        
+        log_info "Finished #{@commit}"
+      rescue => e
+        raise e if ENV['TINYCI_ENV'] == 'test'
+        
+        log_error e
+        log_error e.backtrace
         return false
-      ensure
-
       end
       
       true
     end
     
+    # Build the absolute target path
+    def target_path
+      File.absolute_path("#{@working_dir}/builds/#{@time.to_i}_#{@commit}/")
+    end
+    
+    # Build the export path
+    def export_path
+      File.join(target_path, 'export')
+    end
+    
     private
+    
+    def run_hook!(name)
+      return unless @hooker
+      
+      @hooker.send("#{name}!")
+    end
     
     # Creates log file if it doesnt exist
     def setup_log
@@ -115,6 +164,14 @@ module TinyCI
       klass.new(@config[:tester][:config].merge(target: export_path), logger: @logger)
     end
     
+    # Instantiate the Hooker object according to the class named in the config
+    def instantiate_hooker
+      return nil unless @config[:hooker].is_a? Hash
+      
+      klass = TinyCI::Hookers.const_get(@config[:hooker][:class])
+      klass.new(@config[:hooker][:config].merge(target: export_path), logger: @logger)
+    end
+    
     # Instantiate the {Config} object from the `.tinyci.yml` file in the exported directory
     def load_config
       @config ||= Config.new(working_dir: export_path)
@@ -123,16 +180,6 @@ module TinyCI
     # Parse the commit time from git
     def commit_time
       Time.at execute(git_cmd('show', '-s', '--format=%ct', @commit)).to_i
-    end
-
-    # Build the absolute target path
-    def target_path
-      File.absolute_path("#{@working_dir}/builds/#{@time.to_i}_#{@commit}/")
-    end
-    
-    # Build the export path
-    def export_path
-      File.join(target_path, 'export')
     end
 
     def ensure_path(path)
