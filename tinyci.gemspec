@@ -47,4 +47,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'fuubar'
   spec.add_development_dependency 'rspec-nc'
   spec.add_development_dependency 'terminal-notifier', '1.7.1'
+  spec.add_development_dependency 'rubocop'
 end
