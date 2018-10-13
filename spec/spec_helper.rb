@@ -1,6 +1,10 @@
 ENV["TINYCI_ENV"] = 'test'
 
 require "bundler/setup"
+
+require 'simplecov'
+SimpleCov.start
+
 require 'fileutils'
 require 'pry'
 

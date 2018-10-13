@@ -69,6 +69,44 @@ It is of course possible that commits might be pushed consistently faster than t
 
 If you look in the source code you will also find `RktBuilder` and `RktTester`, these were experimental attempts to integrate the Rkt container runtime. They are not recommended for use but are left for users to examine.
 
+#### Hooks
+
+TinyCI supports hooks/callbacks, much like git itself. Here is the order of execution:
+
+```
+  * clean
+  * export
+
+  before_build
+  
+  * build
+  
+  after_build
+  after_build_success
+  after_build_failure
+  
+  before_test
+  
+  * test
+  
+  after_test
+  after_test_success
+  after_test_failure
+```
+
+`*` indicates an actual phase of TinyCI's execution, the rest are callbacks.
+
+Note that the `before_build` and `before_test` hooks will halt the processing of the commit completely if they fail (ie. return a status > 0)
+
+To setup hooks, define a section like this in your config file:
+
+```
+hooker:
+  class: ScriptHooker
+  config:
+    after_build: ./after_build.sh
+```
+
 #### Logging/Output
 
 TinyCI is executed in a `post-update` git hook. As such, the output is shown to the user as part of the local call to `git push`. Once the TinyCI hook is running, the local git process can be freely killed if the user does not wish to watch the output - this will not affect the remote execution of TinyCI.
@@ -76,8 +114,6 @@ TinyCI is executed in a `post-update` git hook. As such, the output is shown to 
 As well as logging to stdout, the TinyCI process writes a `tinyci.log` file in each exported directory.
 
 #### Limitations/TODO
-
-* TinyCI currently has no support for running a script on success or failure of the test script. This feature would allow for notifications to be sent, eg. slack bots, email, etc. It would also enable TinyCI to act as part of an automated deployment system.
 
 * As mentioned above, when TinyCI is executed against a commit without a configuration file, it exports the whole directory, finds the config file to be missing, then deletes the export. As such, when TinyCI installed against an existing project with many commits, this process will happen for every commit, wasting a lot of time and churning the disk.  
 Instead, it would be preferable to check for the config file before doing the export, with a call to `git-cat-file`. An additional way to handle this would be to prevent the processing of commits created prior to the installation of TinyCI, perhaps by marking them with git-notes at install time, or by checking the creation date of the hook file.
