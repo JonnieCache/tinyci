@@ -29,9 +29,9 @@ Gem::Specification.new do |spec|
   end
   spec.executables   = ["tinyci"]
   spec.require_paths = ["lib"]
-  
+
   LOGO = File.read(File.expand_path('lib/tinyci/logo.txt', __dir__))
-  
+
   spec.post_install_message = (LOGO % TinyCI::VERSION) + "\n"
 
   spec.add_development_dependency "bundler", "~> 1.14"
@@ -41,4 +41,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'yard'
   spec.add_development_dependency 'redcarpet'
+  spec.add_development_dependency 'pry-byebug'
+  spec.add_development_dependency 'pry'
+  spec.add_development_dependency 'guard-rspec'
+  spec.add_development_dependency 'fuubar'
+  spec.add_development_dependency 'rspec-nc'
+  spec.add_development_dependency 'terminal-notifier', '1.7.1'
 end
