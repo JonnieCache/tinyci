@@ -21,7 +21,7 @@ module TinyCI
       
       unless status.success?
         log_error output
-        raise SubprocessError.new(label, command.join(' '), status.to_i)
+        raise SubprocessError.new(label, command.join(' '), status)
       end
       
       output.chomp
@@ -43,7 +43,7 @@ module TinyCI
         status = waiter.value
         unless status.success?
           log_error output
-          raise SubprocessError.new(label, commands[i].join(' '), status.to_i)
+          raise SubprocessError.new(label, commands[i].join(' '), status)
         end
       end
       
