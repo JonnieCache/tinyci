@@ -1,0 +1,8 @@
+builder:
+  class: ScriptBuilder
+  config:
+    command: docker build -t tinyci .
+tester:
+  class: ScriptTester
+  config:
+    command: docker run tinyci bundle exec rspec
