@@ -26,7 +26,8 @@ RSpec.describe TinyCI::Runner do
       expect(builds.sort).to eq [".", "..", "1506086916_5c770890e9dd664028c508d1365c6f29443640f5"]
       
       build_content = Dir.entries(File.join(repo_path(:single_commit), 'builds', '1506086916_5c770890e9dd664028c508d1365c6f29443640f5', 'export'))
-      expect(build_content).to eq [".", "..", "file"]
+      build_content.reject! {|c| %w{. ..}.include? c}
+      expect(build_content).to eq ["file"]
       
     end
   end
