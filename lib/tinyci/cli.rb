@@ -1,6 +1,7 @@
 require 'tinyci/version'
 require 'tinyci/scheduler'
 require 'tinyci/installer'
+require 'tinyci/compactor'
 require 'tinyci/git_utils'
 require 'optparse'
 
@@ -29,6 +30,12 @@ module TinyCI
         'install' => OptionParser.new do |o|
           o.banner = "Usage: install [options]"
           o.on("-q", "--[no-]quiet", "quietly run") {|v| opts[:quiet] = v}
+        end,
+        'compact' => OptionParser.new do |o|
+          o.banner = "Usage: compact [options]"
+          o.on("-n", "--num-builds-to-leave <NUM>", "number of builds to leave in place, starting from the most recent") {|n| opts[:num_builds_to_leave] = n}
+          o.on("-b", "--builds-to-leave <BUILDS>", "specific build directories to leave in place, comma-separated") {|b| opts[:builds_to_leave] = b.split(',')}
+          o.on("-q", "--[no-]quiet", "quietly run") {|v| opts[:quiet] = v}
         end
       }
       
@@ -40,6 +47,7 @@ Global options:
 Available commands:
     run      build and test the repo
     install  install the git hook into the current repository
+    compact  compress old build artifacts
     version  print the TinyCI version number
 TXT
       if argv[0] == '--help'
@@ -93,6 +101,12 @@ TXT
       logger = MultiLogger.new(quiet: opts[:quiet])
     
       TinyCI::Installer.new(logger: logger, working_dir: opts[:dir]).write!
+    end
+    
+    def self.do_compact(opts)
+      logger = MultiLogger.new(quiet: opts[:quiet])
+      
+      TinyCI::Compactor.new(logger: logger, working_dir: opts[:dir], num_builds_to_leave: opts[:num_builds_to_leave], builds_to_leave: opts[:builds_to_leave]).compact!
     end
     
     def do_version(opts)
