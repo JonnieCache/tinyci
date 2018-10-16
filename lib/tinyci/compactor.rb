@@ -1,6 +1,8 @@
 require 'fileutils'
 require 'tinyci/git_utils'
-require 'tinyci/subprocesses'
+require 'zlib'
+require 'rubygems/package'
+require 'find'
 
 module TinyCI
   
@@ -8,6 +10,8 @@ module TinyCI
   class Compactor
     include GitUtils
     include Subprocesses
+    
+    BLOCKSIZE_TO_READ = 1024 * 1000
     
     # Constructor
     # 
@@ -23,12 +27,10 @@ module TinyCI
     # Write the hook to the relevant path and make it executable
     def compact!
       directories_to_compress.each do |dir|
-        archive_path = File.join(builds_dir, dir+".tar.gz")
-        
-        execute 'tar', '-zcf', archive_path, '-C', builds_dir, dir
+        compress_directory dir
         FileUtils.rm_rf File.join(builds_dir, dir)
         
-        log_info "Compacted #{archive_path}"
+        log_info "Compacted #{archive_path(dir)}"
       end
     end
     
@@ -48,6 +50,36 @@ module TinyCI
     
     def builds_dir
       File.join @working_dir, 'builds/'
+    end
+    
+    def archive_path(dir)
+      File.join(builds_dir, dir+".tar.gz")
+    end
+    
+    def compress_directory(dir)
+      File.open archive_path(dir), 'wb' do |oarchive_path|
+        Zlib::GzipWriter.wrap oarchive_path do |gz|
+          Gem::Package::TarWriter.new gz do |tar|
+            Find.find "#{builds_dir}/"+dir do |f|
+              relative_path = f.sub "#{builds_dir}/", ""
+              mode = File.stat(f).mode
+              size = File.stat(f).size
+              if File.directory? f
+                tar.mkdir relative_path, mode
+              else
+                tar.add_file_simple relative_path, mode, size do |tio|
+                  File.open f, 'rb' do |rio|
+                    while buffer = rio.read(BLOCKSIZE_TO_READ)
+                      tio.write buffer
+                    end
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+      
     end
   end
 end

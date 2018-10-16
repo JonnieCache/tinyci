@@ -10,8 +10,8 @@ RSpec.describe TinyCI::Compactor do
     sha_command = RUBY_PLATFORM =~ /darwin/ ? 'shasum' : 'sha1sum'
     
     shas = {
-      "1539604024_55431d9fd55d5fc507c09297ad2a11c7451b9e7b" => '847c0dd94608fdb743720fb48813fa16806a738f',
-      "1539604533_c3add70d640cb339ad19dbb3424b6f1c0c27b17d" => '3f75c26cd7b45d8178c9be24d9029e6993818e0b'
+      "1539604024_55431d9fd55d5fc507c09297ad2a11c7451b9e7b" => '69ee385834e4cc7ecbe5f51047b69d72326eb5ce',
+      "1539604533_c3add70d640cb339ad19dbb3424b6f1c0c27b17d" => 'a23ecd2ec4d139ff23ced4bd4e20904e8bfa9fca'
     }
     
     shas.each_pair do |build, correct_sha|
