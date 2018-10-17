@@ -28,7 +28,7 @@ module TinyCI
     def compact!
       directories_to_compress.each do |dir|
         compress_directory dir
-        FileUtils.rm_rf File.join(builds_dir, dir)
+        FileUtils.rm_rf builds_dir(dir)
         
         log_info "Compacted #{archive_path(dir)}"
       end
@@ -38,7 +38,7 @@ module TinyCI
     
     def directories_to_compress
       builds = Dir.entries builds_dir
-      builds.select! {|e| File.directory? File.join(builds_dir, e) }
+      builds.select! {|e| File.directory? builds_dir(e) }
       builds.reject! {|e| %w{. ..}.include? e }
       builds.sort!
       
@@ -48,8 +48,8 @@ module TinyCI
       builds
     end
     
-    def builds_dir
-      File.join @working_dir, 'builds/'
+    def builds_dir(path_segments = nil)
+      File.join @working_dir, 'builds/', *path_segments
     end
     
     def archive_path(dir)
@@ -64,6 +64,7 @@ module TinyCI
               relative_path = f.sub "#{builds_dir}/", ""
               mode = File.stat(f).mode
               size = File.stat(f).size
+              
               if File.directory? f
                 tar.mkdir relative_path, mode
               else
@@ -75,6 +76,7 @@ module TinyCI
                   end
                 end
               end
+              
             end
           end
         end
