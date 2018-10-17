@@ -43,7 +43,7 @@ module TinyCI
       pid = PidFile.new(pidfile: 'tinyci.pid', piddir: @working_dir)
       
       result = if @commit
-        run_commit @commit
+        run_commit get_commit @commit
       else
         run_all_commits
       end
@@ -60,16 +60,15 @@ module TinyCI
     # @return [Array<String>] the sha1 hashes in reverse order of creation time
     def get_commits
       log = execute(git_cmd('log', '--notes=tinyci*', '--format=%H %ct %N§§§', '--reverse'))
-      
       lines = log.split("§§§")
-      lines.map do |line|
-        parts = line.split(' ')
-        {
-          sha: parts[0],
-          time: parts[1],
-          result: parts[2]
-        }
-      end.select {|c| c[:result].nil?}
+      
+      lines.map {|l| format_commit_data(l)}.select {|c| c[:result].nil?}
+    end
+    
+    def get_commit(sha)
+      data = execute(git_cmd('show', '--quiet', '--notes=tinyci*', "--format=%H %ct", sha))
+      
+      format_commit_data(data)
     end
     
     # Instantiates {Runner} for a given git object, runs it, and stores the result
@@ -82,6 +81,15 @@ module TinyCI
       ).run!
       
       set_result(commit, result)
+    end
+    
+    def format_commit_data(data)
+      parts = data.split(' ')
+      {
+        sha: parts[0],
+        time: parts[1],
+        result: parts[2]
+      }
     end
     
     # Repeatedly gets the list of eligable commits and runs TinyCI against them until there are no more remaining

@@ -24,7 +24,15 @@ RSpec.describe TinyCI::CLI do
       before(:each) {extract_repo(:bare)}
       
       it 'produces the right output' do
-        expect{TinyCI::CLI.parse! %W[--dir #{repo_path(:bare)} run --all]}.to output(regex).to_stdout      
+        expect{TinyCI::CLI.parse! %W[--dir #{repo_path(:bare)} run --all]}.to output(regex).to_stdout
+      end
+    end
+    
+    context 'with specified commit' do
+      before(:each) {extract_repo(:with_config)}
+      
+      it 'produces the right output' do
+        expect{TinyCI::CLI.parse! %W[--dir #{repo_path(:with_config)} run --commit 418b2480c8d2a1252b357f1fe3a1ea7e3e3603b9]}.to output(regex).to_stdout
       end
     end
   end
