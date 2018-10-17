@@ -4,6 +4,7 @@ require 'tinyci/installer'
 require 'tinyci/compactor'
 require 'tinyci/git_utils'
 require 'optparse'
+require 'pidfile'
 
 module TinyCI
   # Defines the CLI interface. Uses OptionParser.
