@@ -182,10 +182,12 @@ module TinyCI
       Time.at execute(git_cmd('show', '-s', '--format=%ct', @commit)).to_i
     end
 
+    # Ensure a path exists
     def ensure_path(path)
       execute 'mkdir', '-p', path
     end
     
+    # Delete the export path
     def clean
       FileUtils.rm_rf export_path
     end
