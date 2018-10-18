@@ -107,6 +107,19 @@ hooker:
     after_build: ./after_build.sh
 ```
 
+#### Compactor
+
+With continued use, the `builds` directory will grow ever larger. TinyCI provides the `compact` command to deal with this. It compresses old builds into `.tar.gz` files.
+
+"Old" in this context is defined using two options to the `tinyci compact` command:
+
+* `--num-builds-to-leave` - How many build directories to leave in place, starting from the newest. Defaults to `1`.
+* `--builds-to-leave` - A comma-separated list of specific build directories to leave in place.
+
+The latter option is intended for use in an automated deployment system, to allow the script to run without removing builds that are being used somewhere else in the system. For a demonstration of this, see the [example project](#Example_Project).
+
+To use it, simply run `tinyci compact` from the root of the repo you wish to compact.
+
 #### Logging/Output
 
 TinyCI is executed in a `post-update` git hook. As such, the output is shown to the user as part of the local call to `git push`. Once the TinyCI hook is running, the local git process can be freely killed if the user does not wish to watch the output - this will not affect the remote execution of TinyCI.
@@ -122,8 +135,6 @@ Instead, it would be preferable to check for the config file before doing the ex
 Instead, this second TinyCI execution should begin tailing the output of the first process, perhaps gaining direct access to it's stdout stream.
 
 * It would be desirable to add a command to the TinyCI binary to SSH into the remote server and tail the the log output of a currently running TinyCI process, enabling functionality similar to that described in above, but without making a new commit.
-
-* The exported copies of each build are left on the disk forever. This will obviously eat disk space. One could handle deleting/compressing them with a cronjob, however it would be desirable to integrate this functionality into TinyCI and to automate it.
 
 * More configuration options should be added, eg. specification of the export path.
 
@@ -160,85 +171,9 @@ Now, commit the configuration file and push it to your remote repository. As dis
 
 #### Example Project
 
-Here we will demonstrate cloning the [tinyci-example](https://github.com/JonnieCache/tinyci-example) project, creating a bare clone of it to simulate our server where the tests will run, and pushing a commit to see TinyCI in action.
-
-The example project has very simple build and test scripts written in bash.
-
-First, create a directory to store both clones:
-
-    $ mkdir tinyci-test
-    $ cd tinyci-test
-
-Clone the example project from github:
-
-    $ git clone https://github.com/JonnieCache/tinyci-example.git
+There is an example project available at https://github.com/JonnieCache/tinyci-example.
     
-    Cloning into 'tinyci-example'...
-    remote: Counting objects: 8, done.
-    remote: Compressing objects: 100% (6/6), done.
-    remote: Total 8 (delta 0), reused 8 (delta 0), pack-reused 0
-    Unpacking objects: 100% (8/8), done.
-    
-Clone it again into a bare repository:
-
-    $ git clone --bare tinyci-example tinyci-example-bare
-    
-    Cloning into bare repository 'tinyci-example-bare'...
-    done.
-    
-Install tinyci:
-
-    $ gem install tinyci
-    
-Install the tinyci hook into our bare clone:
-
-    $ cd tinyci-example-bare
-    $ tinyci install
-    
-    [09:48:42] tinyci post-update hook installed sucessfully
-    
-Go into our initial clone and make a change:
-
-    $ cd ../tinyci-example
-    $ echo "foo" > bar
-    $ git add bar
-    $ git commit -m 'foobar'
-    
-    [master cebb4ec] foobar
-     1 file changed, 1 insertion(+)
-     create mode 100644 bar
-    
-Add our bare repo as a remote:
-
-    $ git remote add test ../tinyci-example-bare
-    
-Push the commit and watch tinyci in action:
-
-    $ git push test master
-    
-    Counting objects: 3, done.
-    Delta compression using up to 4 threads.
-    Compressing objects: 100% (2/2), done.
-    Writing objects: 100% (3/3), 268 bytes | 0 bytes/s, done.
-    Total 3 (delta 1), reused 0 (delta 0)
-    remote: [09:49:53] Commit: 22c36d0c1213361d06b385d2b55648985347e1f4
-    remote: [09:49:53] Cleaning...
-    remote: [09:49:53] Exporting...
-    remote: [09:49:53] Building...
-    remote: [09:49:53] Testing...
-    remote: [09:49:53] foo bar
-    remote: [09:49:53] Finished 22c36d0c1213361d06b385d2b55648985347e1f4
-    remote: [09:49:53] Commit: cebb4ec18b89f093c7cdeb909c2c340708052575
-    remote: [09:49:53] Cleaning...
-    remote: [09:49:53] Exporting...
-    remote: [09:49:53] Building...
-    remote: [09:49:53] Testing...
-    remote: [09:49:53] foo bar
-    remote: [09:49:53] Finished cebb4ec18b89f093c7cdeb909c2c340708052575
-    To ../tinyci-example-bare
-       22c36d0..cebb4ec  master -> master
-    
-Here we are seeing TinyCI testing both the initial commit that is present in the github repo, an then the new commit that we just made. Breaking the test to see the failure output is left as an exercise for the reader.
+See that repo for a walkthrough demonstrating various TinyCI features.
     
 ### Contributing
 
