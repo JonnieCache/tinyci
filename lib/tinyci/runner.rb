@@ -83,7 +83,7 @@ module TinyCI
           raise e if ENV['TINYCI_ENV'] == 'test'
           
           log_error e
-          log_error e.backtrace
+          log_debug e.backtrace
           
           return false
         ensure
@@ -101,7 +101,7 @@ module TinyCI
           raise e if ENV['TINYCI_ENV'] == 'test'
           
           log_error e
-          log_error e.backtrace
+          log_debug e.backtrace
           
           return false
         ensure
@@ -116,7 +116,7 @@ module TinyCI
         raise e if ENV['TINYCI_ENV'] == 'test'
         
         log_error e
-        log_error e.backtrace
+        log_debug e.backtrace
         return false
       end
       
