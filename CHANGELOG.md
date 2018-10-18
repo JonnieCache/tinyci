@@ -1,3 +1,6 @@
+0.3.0 - October 18, 2018
+  Add compactor
+  Fixes to hooks
 0.2.0 - October 13, 2018
   Add hooks
 0.1.2 - August 16, 2018
