@@ -51,13 +51,13 @@ module TinyCI
       builds.sort!
       
       builds = builds[0..-(@num_builds_to_leave+1)]
-      builds.reject! {|e| @builds_to_leave.include? e }
+      builds.reject! {|e| @builds_to_leave.include?(e) || @builds_to_leave.include?(builds_dir(e, 'export'))}
 
       builds
     end
     
     # Get the location of the builds directory
-    def builds_dir(path_segments = nil)
+    def builds_dir(*path_segments)
       File.join @working_dir, 'builds/', *path_segments
     end
     

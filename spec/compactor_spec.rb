@@ -51,6 +51,27 @@ RSpec.describe TinyCI::Compactor do
         1539604563_35998f9b3b7ea1bca3c7104111e36bf4e967fcf7
       }
     end
+    
+    context 'with absolute path' do
+      let(:compactor) do
+        TinyCI::Compactor.new(
+          working_dir: repo_path(:multiple_exports),
+          builds_to_leave: repo_path(:multiple_exports, 'builds', '1539604024_55431d9fd55d5fc507c09297ad2a11c7451b9e7b')
+        )
+      end
+      
+      it 'respects the option' do
+        compactor.compact!
+        
+        entries = Dir.entries(repo_path(:multiple_exports)+'/builds').reject {|e| %w{. ..}.include? e}.sort
+        
+        expect(entries).to eq %w{
+          1539604024_55431d9fd55d5fc507c09297ad2a11c7451b9e7b
+          1539604533_c3add70d640cb339ad19dbb3424b6f1c0c27b17d.tar.gz
+          1539604563_35998f9b3b7ea1bca3c7104111e36bf4e967fcf7
+        }
+      end
+    end
   end
     
 end

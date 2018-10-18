@@ -28,8 +28,9 @@ module GitSpecHelper
     path(pathname, skip_exist_check: skip_exist_check)
   end
   
-  def repo_path(repo)
-    pathname = File.join REPO_ROOT, "#{repo}.git"
+  def repo_path(*parts)
+    pathname = File.join REPO_ROOT, "#{parts[0]}.git", *parts[1..-1]
+    
     path(pathname)
   end
   
