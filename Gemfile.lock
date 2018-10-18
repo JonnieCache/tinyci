@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    tinyci (0.2.0)
+    tinyci (0.3.0)
 
 GEM
   remote: https://rubygems.org/
