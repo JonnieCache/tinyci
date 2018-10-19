@@ -49,4 +49,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec-nc'
   spec.add_development_dependency 'terminal-notifier', '1.7.1'
   spec.add_development_dependency 'rubocop'
+  spec.add_development_dependency 'ffi', '>= 1.9.24'
 end
