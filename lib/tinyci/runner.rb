@@ -76,7 +76,6 @@ module TinyCI
         run_hook! :before_build
         begin
           @builder.build
-          run_hook! :after_build_success
         rescue => e
           run_hook! :after_build_failure
           
@@ -86,6 +85,8 @@ module TinyCI
           log_debug e.backtrace
           
           return false
+        else
+          run_hook! :after_build_success
         ensure
           run_hook! :after_build
         end
@@ -104,11 +105,12 @@ module TinyCI
           log_debug e.backtrace
           
           return false
+        else
+          run_hook! :after_test_success
         ensure
           run_hook! :after_test
         end
         
-        run_hook! :after_test_success
         
         
         log_info "Finished #{@commit}"
