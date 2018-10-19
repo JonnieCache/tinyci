@@ -1,3 +1,5 @@
+0.3.1 - October 19, 2018
+  Update insecure FFI dependency
 0.3.0 - October 18, 2018
   Add compactor
   Fixes to hooks
