@@ -81,17 +81,17 @@ TinyCI supports hooks/callbacks, much like git itself. Here is the order of exec
   
   * build
   
-  after_build
   after_build_success
   after_build_failure
+  after_build
   
   before_test
   
   * test
   
-  after_test
   after_test_success
   after_test_failure
+  after_test
 ```
 
 `*` indicates an actual phase of TinyCI's execution, the rest are callbacks.
