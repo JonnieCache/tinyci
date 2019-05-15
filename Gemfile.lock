@@ -106,12 +106,12 @@ PLATFORMS
 DEPENDENCIES
   awesome_print
   barrier
-  bundler (~> 1.14)
   ffi (>= 1.9.24)
   fuubar
   guard-rspec
   pry
   pry-byebug
+  pry-doc
   rake
   redcarpet
   rspec
@@ -123,4 +123,4 @@ DEPENDENCIES
   yard
 
 BUNDLED WITH
-   1.16.3
+   2.0.1

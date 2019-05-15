@@ -34,7 +34,6 @@ Gem::Specification.new do |spec|
 
   spec.post_install_message = (LOGO % TinyCI::VERSION) + "\n"
 
-  spec.add_development_dependency "bundler", "~> 1.14"
   spec.add_development_dependency 'awesome_print'
   spec.add_development_dependency 'rspec'
   spec.add_development_dependency 'barrier'
@@ -42,6 +41,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'yard'
   spec.add_development_dependency 'redcarpet'
   spec.add_development_dependency 'pry-byebug'
+  spec.add_development_dependency 'pry-doc'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'guard-rspec'
   spec.add_development_dependency 'fuubar'
