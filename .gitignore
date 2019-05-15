@@ -6,3 +6,7 @@ spec/examples.txt
 tmp
 pkg
 coverage
+.pry_history
+.DS_Store
+rubocop.txt
+spec/support/tmp
