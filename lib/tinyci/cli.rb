@@ -101,7 +101,7 @@ TXT
     def self.do_install(opts)
       logger = MultiLogger.new(quiet: opts[:quiet])
     
-      TinyCI::Installer.new(logger: logger, working_dir: opts[:dir]).write!
+      TinyCI::Installer.new(logger: logger, working_dir: opts[:dir]).install!
     end
     
     def self.do_compact(opts)

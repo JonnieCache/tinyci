@@ -17,7 +17,7 @@ module TinyCI
     end
     
     # Write the hook to the relevant path and make it executable
-    def write!
+    def install!
       unless inside_repository?
         log_error "not currently in a git repository"
         return false
