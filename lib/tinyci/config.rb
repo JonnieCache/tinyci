@@ -1,3 +1,4 @@
+require 'tinyci/config_transformer'
 require 'tinyci/symbolize'
 require 'yaml'
 
@@ -46,7 +47,11 @@ module TinyCI
     end
     
     def config_content
-      @config_content ||= symbolize(YAML.safe_load(File.read(config_pathname))).freeze
+      @config_content ||= begin
+        config = YAML.safe_load(File.read(config_pathname))
+        transformed_config = ConfigTransformer.new(config).transform!
+        symbolize(transformed_config).freeze
+      end
     end
   end
     

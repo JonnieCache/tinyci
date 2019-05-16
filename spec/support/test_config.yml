@@ -1,3 +1,12 @@
-foo:
-  bar:
-    baz
+builder:
+  class: ScriptBuilder
+  config:
+    command: foo
+tester:
+  class: ScriptTester
+  config:
+    command: bar
+hooker:
+  class: ScriptHooker
+  config:
+    after_build: ./after_build.sh

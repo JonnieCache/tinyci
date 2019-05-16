@@ -1,0 +1,4 @@
+build: foo
+test: bar
+hooks:
+  after_build: ./after_build.sh
