@@ -48,7 +48,7 @@ module TinyCI
       <<-EOF
 #!/bin/sh
 
-tinyci run --all
+#{Gem.bin_path('tinyci', 'tinyci')} run --all
       EOF
     end
   end
