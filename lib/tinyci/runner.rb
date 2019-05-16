@@ -157,13 +157,13 @@ module TinyCI
     # Instantiate the Builder object according to the class named in the config
     def instantiate_builder
       klass = TinyCI::Builders.const_get(@config[:builder][:class])
-      klass.new(@config[:builder][:config].merge(target: export_path), logger: @logger)
+      klass.new(@config[:builder][:config].merge(target: export_path, commit: @commit), logger: @logger)
     end
     
     # Instantiate the Tester object according to the class named in the config
     def instantiate_tester
       klass = TinyCI::Testers.const_get(@config[:tester][:class])
-      klass.new(@config[:tester][:config].merge(target: export_path), logger: @logger)
+      klass.new(@config[:tester][:config].merge(target: export_path, commit: @commit), logger: @logger)
     end
     
     # Instantiate the Hooker object according to the class named in the config
@@ -171,7 +171,7 @@ module TinyCI
       return nil unless @config[:hooker].is_a? Hash
       
       klass = TinyCI::Hookers.const_get(@config[:hooker][:class])
-      klass.new(@config[:hooker][:config].merge(target: export_path), logger: @logger)
+      klass.new(@config[:hooker][:config].merge(target: export_path, commit: @commit), logger: @logger)
     end
     
     # Instantiate the {Config} object from the `.tinyci.yml` file in the exported directory
