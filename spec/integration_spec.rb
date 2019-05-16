@@ -6,7 +6,7 @@ RSpec.describe 'Integration' do
       builder:
         class: ScriptBuilder
         config:
-          command: echo <%= commit %>
+          command: echo LOL
       tester:
         class: ScriptTester
         config:
