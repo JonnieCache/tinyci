@@ -19,27 +19,16 @@ module GitSpecHelper
   end
   
   def repo_archive_path(repo)
-    pathname = File.join REPO_ROOT, "#{repo}.git.tar.gz"
-    path(pathname)
+    File.join REPO_ROOT, "#{repo}.git.tar.gz"
   end
   
-  def support_path(filename, skip_exist_check: false)
-    pathname = File.join SUPPORT_ROOT, filename
-    path(pathname, skip_exist_check: skip_exist_check)
+  def support_path(filename)
+    File.join SUPPORT_ROOT, filename
   end
   
   def repo_path(*parts)
-    pathname = File.join REPO_ROOT, "#{parts[0]}.git", *parts[1..-1]
+    File.join REPO_ROOT, "#{parts[0]}.git", *parts[1..-1]
     
-    path(pathname)
-  end
-  
-  private
-  
-  def path(pathname, skip_exist_check: false)
-    raise ArgumentError, "#{pathname} does not exist!" unless skip_exist_check || File.exist?(pathname)
-    
-    pathname
   end
 end
 

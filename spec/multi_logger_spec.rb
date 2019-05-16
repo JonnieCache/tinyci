@@ -3,7 +3,7 @@ require 'tinyci/logging'
 require 'fileutils'
 
 RSpec.describe TinyCI::MultiLogger do
-  let(:log_path) {support_path('test.log', skip_exist_check: true)}
+  let(:log_path) {support_path('test.log')}
   let(:logger) {TinyCI::MultiLogger.new(quiet: false, path: log_path)}
   before {FileUtils.rm_f log_path}
   
