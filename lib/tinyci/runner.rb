@@ -6,9 +6,6 @@ require 'tinyci/config'
 require 'tinyci/builders/test_builder'
 require 'tinyci/testers/test_tester'
 
-require 'tinyci/builders/rkt_builder'
-require 'tinyci/testers/rkt_tester'
-
 require 'tinyci/builders/script_builder'
 require 'tinyci/testers/script_tester'
 require 'tinyci/hookers/script_hooker'
