@@ -63,6 +63,8 @@ module TinyCI
       opts = {}
       opts[:chdir] = pwd unless pwd.nil?
       
+      log_debug "CMD: #{command.join(' ')}"
+      
       Open3.popen2e(command.join(' '), opts) do |stdin, stdout_and_stderr, wait_thr|
         stdin.close
         
