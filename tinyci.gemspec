@@ -34,7 +34,6 @@ Gem::Specification.new do |spec|
 
   spec.post_install_message = (LOGO % TinyCI::VERSION) + "\n"
 
-  spec.add_development_dependency 'awesome_print'
   spec.add_development_dependency 'rspec', '>= 3.8.0'
   spec.add_development_dependency 'barrier'
   spec.add_development_dependency 'rake'
@@ -47,7 +46,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'fuubar'
   spec.add_development_dependency 'simplecov'
   spec.add_development_dependency 'rspec-nc'
-  spec.add_development_dependency 'terminal-notifier', '1.7.1'
-  spec.add_development_dependency 'rubocop'
-  spec.add_development_dependency 'ffi', '>= 1.9.24'
+  spec.add_development_dependency 'terminal-notifier', '1.7.2'
 end
