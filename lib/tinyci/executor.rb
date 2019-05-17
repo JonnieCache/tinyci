@@ -1,5 +1,7 @@
 require 'tinyci/subprocesses'
 require 'tinyci/logging'
+require 'ostruct'
+require 'erb'
 
 module TinyCI
   # Parent class for Builder and Tester classes
@@ -18,11 +20,25 @@ module TinyCI
       @logger = logger
     end
     
+    def command
+      ['/bin/sh', '-c', "'#{interpolated_command}'"]
+    end
+    
     private
     
-    def script_location
-      # path = File.join @config[:target], @config[:command]
-      ['/bin/sh', '-c', "'#{@config[:command]}'"]
+    def interpolated_command
+      src = @config[:command]
+      erb = ERB.new src
+      
+      erb.result(erb_scope)
+    end
+    
+    def template_vars
+      OpenStruct.new(commit: @config[:commit])
+    end
+
+    def erb_scope
+      template_vars.instance_eval { binding }
     end
   end
 end
