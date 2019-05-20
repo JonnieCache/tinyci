@@ -21,20 +21,23 @@ module TinyCI
     end
     
     def command
-      ['/bin/sh', '-c', "'#{interpolated_command}'"]
+      ['/bin/sh', '-c', "'#{interpolate(@config[:command])}'"]
     end
     
     private
     
-    def interpolated_command
-      src = @config[:command]
-      erb = ERB.new src
+    def interpolate(command)
+      erb = ERB.new command
       
       erb.result(erb_scope)
     end
     
     def template_vars
-      OpenStruct.new(commit: @config[:commit])
+      OpenStruct.new(
+        commit: @config[:commit],
+        export: @config[:export],
+        target: @config[:target]
+      )
     end
 
     def erb_scope

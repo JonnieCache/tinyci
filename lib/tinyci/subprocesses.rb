@@ -91,7 +91,7 @@ module TinyCI
       attr_reader :status
       attr_reader :command
       
-      def initialize(label, command, status, message = "`#{label || command}` failed with status #{status.exitstatus}")
+      def initialize(label, command, status, message = "#{label}: `#{command}` failed with status #{status.exitstatus}")
         @status = status
         @command = command
         super(message)

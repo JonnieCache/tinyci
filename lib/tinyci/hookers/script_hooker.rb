@@ -7,15 +7,17 @@ module TinyCI
       HOOKS = %w{
         before_build
         
-        after_build
         after_build_success
         after_build_failure
         
+        after_build
+        
         before_test
         
-        after_test
         after_test_success
         after_test_failure
+        
+        after_test
       }
       
       # Those hooks that will halt exectution if they fail
@@ -34,7 +36,7 @@ module TinyCI
           
           log_info "executing #{hook} hook..."
           begin
-            execute_stream(script_location(hook), label: hook, pwd: @config[:target])
+            execute_stream(script_location(hook), label: hook, pwd: @config[:export])
             
             return true
           rescue SubprocessError => e
@@ -52,7 +54,7 @@ module TinyCI
       end
       
       def script_location(hook)
-        ['/bin/sh', '-c', "'#{@config[hook.to_sym]}'"]
+        ['/bin/sh', '-c', "'#{interpolate(@config[hook.to_sym])}'"]
       end
     end
   end
