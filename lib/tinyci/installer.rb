@@ -47,6 +47,7 @@ module TinyCI
     def hook_content
       <<-EOF
 #!/bin/sh
+unset GIT_DIR
 
 #{Gem.bin_path('tinyci', 'tinyci')} run --all
       EOF
