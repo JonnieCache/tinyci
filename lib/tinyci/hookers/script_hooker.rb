@@ -18,6 +18,8 @@ module TinyCI
         after_test_failure
         
         after_test
+        
+        after_all
       }
       
       # Those hooks that will halt exectution if they fail

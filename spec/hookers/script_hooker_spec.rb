@@ -73,7 +73,8 @@ RSpec.describe TinyCI::Hookers::ScriptHooker do
       expect(hook_result('/after_test_success')).to eq true
       expect(hook_result('/after_test_failure')).to eq false
       expect(hook_result('/after_test')).to eq true
-
+      expect(hook_result('/after_build_failure')).to eq false
+      expect(hook_result('/after_all')).to eq true
     end
   end
   
@@ -95,6 +96,7 @@ RSpec.describe TinyCI::Hookers::ScriptHooker do
       expect(hook_result('/after_test_success')).to eq false
       expect(hook_result('/after_test')).to eq false
       expect(hook_result('/after_test_failure')).to eq false
+      expect(hook_result('/after_all')).to eq true
     end
     
   end
@@ -121,6 +123,7 @@ RSpec.describe TinyCI::Hookers::ScriptHooker do
       expect(hook_result('/after_test_success')).to eq false
       expect(hook_result('/after_test')).to eq false
       expect(hook_result('/after_test_failure')).to eq false
+      expect(hook_result('/after_all')).to eq true
     end
     
   end
@@ -142,6 +145,7 @@ RSpec.describe TinyCI::Hookers::ScriptHooker do
       expect(hook_result('/after_test_success')).to eq false
       expect(hook_result('/after_test')).to eq true
       expect(hook_result('/after_test_failure')).to eq true
+      expect(hook_result('/after_all')).to eq true
 
     end
     
@@ -168,6 +172,7 @@ RSpec.describe TinyCI::Hookers::ScriptHooker do
       expect(hook_result('/after_test_success')).to eq false
       expect(hook_result('/after_test')).to eq false
       expect(hook_result('/after_test_failure')).to eq false
+      expect(hook_result('/after_all')).to eq true
     end
     
   end

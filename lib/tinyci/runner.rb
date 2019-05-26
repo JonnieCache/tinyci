@@ -115,6 +115,8 @@ module TinyCI
         log_error e
         log_debug e.backtrace
         return false
+      ensure
+        run_hook! :after_all
       end
       
       true
