@@ -1,9 +1,18 @@
 module TinyCI
+  # Transforms the configuration format from the condensed format to the
+  # more verbose format accepted by the rest of the system
   class ConfigTransformer
+    
+    # Constructor
+    # 
+    # @param [Hash] input The configuration object, in the condensed format
     def initialize(input)
       @input = input
     end
     
+    # Transforms the config object
+    # 
+    # @return [Hash] The config object in the verbose form
     def transform!
       @input.inject({}) do |acc, (key, value)|
         method_name = "transform_#{key}"

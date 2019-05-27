@@ -6,6 +6,9 @@ module TinyCI
   # Represents the Configuration for a repo, parsed from the `.tinyci.yml` file in the repo root.
   # Mainly a wrapper around a the hash object parsed from the yaml in the config file.
   # The keys of the hash are recursively symbolized.
+  # 
+  # As it is loaded, the configuration file data is passed through the {TinyCI::ConfigTransformer}
+  # class, which translates any definitions in the concise format into the more verbose format
   class Config
     include Symbolize
     
@@ -32,6 +35,8 @@ module TinyCI
     end
     
     # Return the raw hash representation
+    # 
+    # @return [Hash] The configuration as a hash
     def to_hash
       config_content
     end
