@@ -1,4 +1,4 @@
-Copyright (c) 2018 Jonathan Davies
+Copyright (c) 2019 Jonathan Davies
 
 MIT License
 

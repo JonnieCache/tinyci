@@ -1,3 +1,7 @@
+0.4 - May 27, 2019
+  New, terser configuration format
+  `after_all` hook
+  Command interpolation
 0.3.2 - October 19, 2018
   Fix hook execution order
 0.3.1 - October 19, 2018
