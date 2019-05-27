@@ -8,6 +8,8 @@ module TinyCI
       "[#{datetime.strftime "%T"}] #{msg}\n"
     end
     
+    LEVEL = Logger::INFO
+    
     attr_accessor :quiet
     
     # Constructor
@@ -21,7 +23,7 @@ module TinyCI
       
       @stdout_logger = Logger.new($stdout)
       @stdout_logger.formatter = FORMAT
-      @stdout_logger.level = Logger::INFO
+      @stdout_logger.level = LEVEL
     end
     
     def targets
@@ -36,7 +38,7 @@ module TinyCI
       if path
         @file_logger = Logger.new(path)
         @file_logger.formatter = FORMAT
-        @file_logger.level = Logger::INFO
+        @file_logger.level = LEVEL
       end
     end
 
