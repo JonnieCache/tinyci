@@ -1,3 +1,6 @@
+0.4.2 - May 28, 2019
+  Make hook installer use relative path, so installed hooks will not need to be rewritten when tinyci is updated 
+  Add --absolute-path option to install for the old behavior, needed in testing etc
 0.4.1 - May 28, 2019
   Fix .yaropts to include all markdown files
 0.4 - May 27, 2019
