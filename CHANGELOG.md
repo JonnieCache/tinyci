@@ -1,3 +1,5 @@
+0.4.1 - May 28, 2019
+  Fix .yaropts to include all markdown files
 0.4 - May 27, 2019
   New, terser configuration format
   `after_all` hook
