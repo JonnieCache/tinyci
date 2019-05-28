@@ -11,9 +11,10 @@ module TinyCI
     # 
     # @param [String] working_dir The directory from which to run. Does not have to be the root of the repo
     # @param [Logger] logger Logger object
-    def initialize(working_dir: nil, logger: nil)
+    def initialize(working_dir: nil, logger: nil, absolute_path: false)
       @logger = logger
       @working_dir = working_dir || repo_root
+      @absolute_path = absolute_path
     end
     
     # Write the hook to the relevant path and make it executable
@@ -44,12 +45,16 @@ module TinyCI
       File.expand_path('hooks/post-update', git_directory_path)
     end
     
+    def bin_path
+      @absolute_path ? Gem.bin_path('tinyci', 'tinyci') : 'tinyci'
+    end
+    
     def hook_content
       <<-EOF
 #!/bin/sh
 unset GIT_DIR
 
-#{Gem.bin_path('tinyci', 'tinyci')} run --all
+#{bin_path} run --all
       EOF
     end
   end

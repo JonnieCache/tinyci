@@ -31,6 +31,7 @@ module TinyCI
         'install' => OptionParser.new do |o|
           o.banner = "Usage: install [options]"
           o.on("-q", "--[no-]quiet", "quietly run") {|v| opts[:quiet] = v}
+          o.on("-a", "--[no-]absolute-path", "install hook with absolute path to specific tinyci version (not recommended)") {|v| opts[:absolute_path] = v}
         end,
         'compact' => OptionParser.new do |o|
           o.banner = "Usage: compact [options]"
@@ -101,7 +102,7 @@ TXT
     def self.do_install(opts)
       logger = MultiLogger.new(quiet: opts[:quiet])
     
-      TinyCI::Installer.new(logger: logger, working_dir: opts[:dir]).install!
+      TinyCI::Installer.new(logger: logger, working_dir: opts[:dir], absolute_path: opts[:absolute_path]).install!
     end
     
     def self.do_compact(opts)

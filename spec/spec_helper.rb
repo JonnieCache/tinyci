@@ -11,8 +11,9 @@ require 'pry'
 Thread.report_on_exception = true
 
 module GitSpecHelper
-  SUPPORT_ROOT = File.expand_path('support/', __dir__)
-  REPO_ROOT = File.expand_path('repos/', SUPPORT_ROOT)
+  PROJECT_ROOT = File.expand_path('..', __dir__)
+  SUPPORT_ROOT = File.expand_path('spec/support', PROJECT_ROOT)
+  REPO_ROOT = File.expand_path('repos', SUPPORT_ROOT)
   
   def extract_repo(repo)
     system 'tar', '-xzf', repo_archive_path(repo), '-C', REPO_ROOT

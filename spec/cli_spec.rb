@@ -43,16 +43,7 @@ RSpec.describe TinyCI::CLI do
       before(:each) {extract_repo(:single_commit)}
       
       it 'prints the message' do
-        expect{TinyCI::CLI.parse! %W[--dir #{repo_path(:single_commit)} install]}.to output(/installed/).to_stdout
-      end
-      
-      it 'installs the hook' do
-        TinyCI::CLI.parse! %W[-q --dir #{repo_path(:single_commit)} install]
-        
-        hook_path = "#{repo_path(:single_commit)}/.git/hooks/post-update"
-        hook_content = File.read hook_path
-        
-        expect(hook_content).to match(/tinyci run --all/)
+        expect{TinyCI::CLI.parse! %W[--dir #{repo_path(:single_commit)} install]}.to output(/installed successfully/).to_stdout
       end
     end
     
@@ -60,16 +51,7 @@ RSpec.describe TinyCI::CLI do
       before(:each) {extract_repo(:bare)}
       
       it 'prints the message' do
-        expect{TinyCI::CLI.parse! %W[--dir #{repo_path(:bare)} install]}.to output(/installed/).to_stdout
-      end
-      
-      it 'installs the hook' do
-        TinyCI::CLI.parse! %W[-q --dir #{repo_path(:bare)} install]
-        
-        hook_path = "#{repo_path(:bare)}/hooks/post-update"
-        hook_content = File.read hook_path
-        
-        expect(hook_content).to match(/tinyci run --all/)
+        expect{TinyCI::CLI.parse! %W[--dir #{repo_path(:bare)} install]}.to output(/installed successfully/).to_stdout
       end
     end
     

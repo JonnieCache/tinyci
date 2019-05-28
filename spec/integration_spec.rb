@@ -25,7 +25,7 @@ RSpec.describe 'Integration' do
   
   before(:each) do
     extract_repo(:bare)
-    TinyCI::Installer.new(working_dir: repo_path(:bare)).install!
+    TinyCI::Installer.new(working_dir: repo_path(:bare), absolute_path: true).install!
     
     `git clone #{repo_path(:bare)} #{repo_path(:bare_clone)} &> /dev/null`
     
