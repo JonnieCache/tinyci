@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'tinyci/installer'
 
 RSpec.describe 'Integration' do
@@ -22,22 +24,21 @@ RSpec.describe 'Integration' do
     EOF
     Regexp.new(r)
   end
-  
+
   before(:each) do
     extract_repo(:bare)
     TinyCI::Installer.new(working_dir: repo_path(:bare), absolute_path: true).install!
-    
+
     `git clone #{repo_path(:bare)} #{repo_path(:bare_clone)} &> /dev/null`
-    
-    File.write repo_path(:bare_clone)+'/.tinyci.yml', config
+
+    File.write repo_path(:bare_clone) + '/.tinyci.yml', config
     `git -C #{repo_path(:bare_clone)} add .`
     `git -c 'user.name=A' -c 'user.email=author@example.com' -C #{repo_path(:bare_clone)} commit -m 'foo'`
   end
-  
+
   it 'produces the right output' do
     cmd = "git -C #{repo_path(:bare_clone)} push origin master"
-    
-    expect{system(cmd)}.to output(regex).to_stderr_from_any_process
+
+    expect { system(cmd) }.to output(regex).to_stderr_from_any_process
   end
-  
 end

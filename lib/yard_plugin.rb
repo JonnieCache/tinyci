@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'redcarpet'
 
 # This file fixes the mismatch between how github handles links to other
@@ -27,7 +29,13 @@ class CompatMarkdown
 
   def initialize(text)
     renderer = YARD::Templates::Helpers::HtmlHelper::MDLinkRenderer.new
-    markdown = Redcarpet::Markdown.new(renderer, no_intra_emphasis: true, gh_blockcode: true, fenced_code_blocks: true, autolink: true)
+    opts = {
+      no_intra_emphasis: true,
+      gh_blockcode: true,
+      fenced_code_blocks: true,
+      autolink: true
+    }
+    markdown = Redcarpet::Markdown.new(renderer, opts)
     @to_html = markdown.render(text)
   end
 end

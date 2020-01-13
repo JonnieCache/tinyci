@@ -7,7 +7,7 @@ RUN apk add --no-cache \
 RUN git config --global user.email "you@example.com"
 RUN git config --global user.name "Your Name"
 
-WORKDIR /tmp 
+WORKDIR /tmp
 ADD Gemfile Gemfile
 ADD Gemfile.lock Gemfile.lock
 ADD tinyci.gemspec tinyci.gemspec
@@ -15,8 +15,9 @@ ADD lib/tinyci/version.rb lib/tinyci/version.rb
 ADD lib/tinyci/logo.txt lib/tinyci/logo.txt
 
 RUN gem update bundler
+RUN bundle config set no-cache 'true'
 
-RUN bundle install --no-cache --jobs=4
+RUN bundle install --jobs=$(nproc)
 
 ADD . /tinyci
 

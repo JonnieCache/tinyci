@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require 'tinyci/executor'
 
 RSpec.describe TinyCI::Executor do
-  let(:executor) {TinyCI::Executor.new(config)}
-  
+  let(:executor) { TinyCI::Executor.new(config) }
+
   describe 'command interpolation' do
     let(:config) do
       {
@@ -11,9 +13,9 @@ RSpec.describe TinyCI::Executor do
         commit: 'abcdef'
       }
     end
-    
+
     it 'interpolates' do
-      expect(executor.command).to eq ["/bin/sh", "-c", "'printf abcdef > foo'"]
+      expect(executor.command).to eq ['/bin/sh', '-c', "'printf abcdef > foo'"]
     end
   end
 end

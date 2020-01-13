@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module TinyCI
   module Symbolize
     # recursively make all keys of `hash` into symbols
@@ -7,7 +9,7 @@ module TinyCI
         hash.each { |key, value| h[key.to_sym] = map_value(value) }
       end
     end
-    
+
     def map_value(thing)
       case thing
       when Hash

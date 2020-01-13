@@ -1,38 +1,40 @@
+# frozen_string_literal: true
+
 require 'tinyci/config_transformer'
 
 RSpec.describe TinyCI::ConfigTransformer do
   let(:input) do
     {
-      build: "foo",
-      test: "bar",
+      build: 'foo',
+      test: 'bar',
       hooks: {
-        after_build: "./after_build.sh"
+        after_build: './after_build.sh'
       }
     }
   end
   let(:output) do
     {
       builder: {
-        :class => "ScriptBuilder",
+        :class => 'ScriptBuilder',
         config: {
-          command: "foo" 
+          command: 'foo'
         }
       },
       hooker: {
-        :class => "ScriptHooker",
+        :class => 'ScriptHooker',
         config: {
-          after_build: "./after_build.sh"
+          after_build: './after_build.sh'
         }
       },
       tester: {
-        :class => "ScriptTester",
+        :class => 'ScriptTester',
         config: {
-          command: "bar"
+          command: 'bar'
         }
       }
     }
   end
-  
+
   it 'transforms correctly' do
     result = TinyCI::ConfigTransformer.new(input).transform!
     expect(result).to eq output

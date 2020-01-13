@@ -1,6 +1,20 @@
 AllCops:
+  Exclude:
+    - 'spec/**/*'
+    - 'lib/pidfile.rb'
   TargetRubyVersion: 2.5
-  
-Metrics/LineLength:
-  Max: 100
 
+Layout/LineLength:
+  Max: 120
+
+Metrics/BlockLength:
+  ExcludedMethods: ['describe', 'context']
+
+Metrics/MethodLength:
+  Max: 25
+
+Metrics/ClassLength:
+  Max: 150
+
+Metrics/AbcSize:
+  Max: 20
