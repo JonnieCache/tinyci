@@ -17,7 +17,6 @@ module TinyCI
     #
     # @param config [Hash] Configuration hash, typically taken
     # from relevant key in the {Config} object.
-    # @param logger [Logger] Logger object
     def initialize(config)
       @config = config
       @logger = config[:logger]
