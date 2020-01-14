@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'logger'
+require 'fileutils'
+require 'pry'
 
 module TinyCI
   # This class allows logging to both `STDOUT` and to a file with a single call.
@@ -18,9 +20,10 @@ module TinyCI
     #
     # @param [Boolean] quiet Disables logging to STDOUT
     # @param [String] path Location to write logfile to
-    def initialize(quiet: false, path: nil)
-      @file_logger = nil
-      self.output_path = path
+    def initialize(quiet: false, path: nil, paths: [])
+      @file_loggers = []
+      add_output_path path
+      paths.each { |p| add_output_path(p) }
       @quiet = quiet
 
       @stdout_logger = Logger.new($stdout)
@@ -30,18 +33,23 @@ module TinyCI
 
     def targets
       logs = []
-      logs << @file_logger if @file_logger
+      logs += @file_loggers
       logs << @stdout_logger unless @quiet
 
       logs
     end
 
-    def output_path=(path)
+    def add_output_path(path)
       return unless path
 
-      @file_logger = Logger.new(path)
-      @file_logger.formatter = FORMAT
-      @file_logger.level = LEVEL
+      FileUtils.touch path
+
+      logger = Logger.new(path)
+      logger.formatter = FORMAT
+      logger.level = LEVEL
+      @file_loggers << logger
+
+      logger
     end
 
     %w[log debug info warn error fatal unknown].each do |m|

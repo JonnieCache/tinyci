@@ -16,6 +16,24 @@ RSpec.describe TinyCI::MultiLogger do
     expect(File.read(log_path)).to match regex
   end
 
+  describe 'with second logger' do
+    let(:log_path) { Tempfile.new.path }
+    let(:second_path) { Tempfile.new.path }
+    let(:logger) { TinyCI::MultiLogger.new(quiet: false, paths: [log_path, second_path]) }
+
+    it 'apends to the second log' do
+      File.write second_path, "lol\n"
+      regex = /foo$/
+
+      expect { logger.info('foo') }.to output(regex).to_stdout
+      expect(File.read(log_path)).to match regex
+
+      second_output_one, second_output_two = File.read(second_path).split("\n")
+      expect(second_output_one).to eq 'lol'
+      expect(second_output_two).to match regex
+    end
+  end
+
   describe 'logging' do
     class WithLogging
       include TinyCI::Logging

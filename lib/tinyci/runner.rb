@@ -36,10 +36,12 @@ module TinyCI
     # Used solely for testing.
     def initialize(working_dir: '.', commit:, time: nil, logger: nil, config: nil)
       @working_dir = working_dir
-      @logger = logger
       @config = config
       @commit = commit
       @time = time || commit_time
+      @logger = logger.is_a?(MultiLogger) ? MultiLogger.new(quiet: logger.quiet) : nil
+      ensure_path target_path
+      setup_log
     end
 
     # Runs the TinyCI system against the single git object referenced in `@commit`.
@@ -48,9 +50,6 @@ module TinyCI
     # rubocop:disable Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/CyclomaticComplexity
     def run!
       begin
-        ensure_path target_path
-        setup_log
-
         log_info "Commit: #{@commit}"
 
         log_info 'Cleaning...'
@@ -126,9 +125,13 @@ module TinyCI
     end
     # rubocop:enable Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/CyclomaticComplexity
 
+    def builds_path
+      File.absolute_path("#{@working_dir}/builds")
+    end
+
     # Build the absolute target path
     def target_path
-      File.absolute_path("#{@working_dir}/builds/#{@time.to_i}_#{@commit}/")
+      File.join(builds_path, "#{@time.to_i}_#{@commit}")
     end
 
     # Build the export path
@@ -148,12 +151,16 @@ module TinyCI
     def setup_log
       return unless @logger.is_a? MultiLogger
 
-      FileUtils.touch logfile_path
-      @logger.output_path = logfile_path
+      @logger.add_output_path logfile_path
+      @logger.add_output_path repo_logfile_path
     end
 
     def logfile_path
       File.join(target_path, 'tinyci.log')
+    end
+
+    def repo_logfile_path
+      File.join(builds_path, 'tinyci.log')
     end
 
     # Instantiate the Builder object according to the class named in the config
