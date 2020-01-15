@@ -26,6 +26,9 @@ RSpec.describe 'Integration' do
       ^.+LOL\s*$
       ^.+Finished.*$
     REGEX
+    # r = <<~REGEX
+    #   ^.+LOL\s*$
+    # REGEX
     Regexp.new(r)
   end
 
@@ -60,8 +63,10 @@ RSpec.describe 'Integration' do
       cmd = "git -C #{repo_path(:bare_clone)} push origin master"
 
       expect { system(cmd) }.to output(regex).to_stderr_from_any_process
-      build_log_name = Pathname(repo_path(:bare) + '/builds').entries.last.join('tinyci.log')
-      build_log_path = repo_path(:bare, '/builds', build_log_name)
+
+      target_dir = Dir.entries(repo_path(:bare, '/builds'))
+                      .reject { |p| %w[. .. tinyci.log].include? p }.sort.last
+      build_log_path = repo_path(:bare, '/builds', target_dir, 'tinyci.log')
       repo_log_path = repo_path(:bare, '/builds', 'tinyci.log')
 
       expect(File.read(build_log_path)).to match regex

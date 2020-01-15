@@ -106,12 +106,12 @@ RSpec.describe TinyCI::Hookers::ScriptHooker do
     let(:hooker_config) { base_hooker_config.merge(before_build: 'exit 1') }
 
     it 'runs the right hooks' do
-      runner.builder = double()
-      runner.tester = double()
+      runner.builder = double
+      runner.tester = double
       expect(runner.builder).to_not receive :build
       expect(runner.tester).to_not receive :test
-      # binding.pry;
-      expect { runner.run! }.to raise_exception TinyCI::Subprocesses::SubprocessError, "before_build: `/bin/sh -c 'exit 1'` failed with status 1"
+      expect { runner.run! }.to raise_exception TinyCI::Subprocesses::SubprocessError,
+                                                "before_build: `/bin/sh -c 'exit 1'` failed with status 1"
 
       expect(hook_result('/before_build')).to eq false
 
@@ -153,11 +153,12 @@ RSpec.describe TinyCI::Hookers::ScriptHooker do
     let(:hooker_config) { base_hooker_config.merge(before_test: 'exit 1') }
 
     it 'runs the right hooks' do
-      runner.builder = double()
-      runner.tester = double()
+      runner.builder = double
+      runner.tester = double
       expect(runner.builder).to receive :build
       expect(runner.tester).to_not receive :test
-      expect { runner.run! }.to raise_exception TinyCI::Subprocesses::SubprocessError, "before_test: `/bin/sh -c 'exit 1'` failed with status 1"
+      expect { runner.run! }.to raise_exception TinyCI::Subprocesses::SubprocessError,
+                                                "before_test: `/bin/sh -c 'exit 1'` failed with status 1"
 
       expect(hook_result('/before_build')).to eq true
 

@@ -2,7 +2,6 @@
 
 require 'logger'
 require 'fileutils'
-require 'pry'
 
 module TinyCI
   # This class allows logging to both `STDOUT` and to a file with a single call.

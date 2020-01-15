@@ -35,6 +35,7 @@ Gem::Specification.new do |spec|
 
   spec.post_install_message = (LOGO % TinyCI::VERSION) + "\n"
 
+  spec.add_development_dependency 'awesome_print'
   spec.add_development_dependency 'barrier'
   spec.add_development_dependency 'fuubar'
   spec.add_development_dependency 'guard-rspec'

@@ -1,2 +1,4 @@
 build: docker build -t tinyci .
 test: docker run tinyci bundle exec rspec --format documentation
+hooks:
+  after_all: rm -rf <%= export %>
