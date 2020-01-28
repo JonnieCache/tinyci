@@ -26,9 +26,6 @@ RSpec.describe 'Integration' do
       ^.+LOL\s*$
       ^.+Finished.*$
     REGEX
-    # r = <<~REGEX
-    #   ^.+LOL\s*$
-    # REGEX
     Regexp.new(r)
   end
 

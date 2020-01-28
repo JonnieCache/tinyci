@@ -2,6 +2,7 @@
 
 require 'tinyci/subprocesses'
 require 'tinyci/git_utils'
+require 'tinyci/path_utils'
 require 'tinyci/logging'
 require 'tinyci/config'
 
@@ -22,6 +23,7 @@ module TinyCI
   class Runner
     include Subprocesses
     include GitUtils
+    include PathUtils
     include Logging
 
     attr_accessor :builder, :tester, :hooker
@@ -38,7 +40,7 @@ module TinyCI
       @working_dir = working_dir
       @config = config
       @commit = commit
-      @time = time || commit_time
+      @time = time
       @logger = logger.is_a?(MultiLogger) ? MultiLogger.new(quiet: logger.quiet) : nil
       ensure_path target_path
       setup_log
@@ -125,20 +127,6 @@ module TinyCI
     end
     # rubocop:enable Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/CyclomaticComplexity
 
-    def builds_path
-      File.absolute_path("#{@working_dir}/builds")
-    end
-
-    # Build the absolute target path
-    def target_path
-      File.join(builds_path, "#{@time.to_i}_#{@commit}")
-    end
-
-    # Build the export path
-    def export_path
-      File.join(target_path, 'export')
-    end
-
     private
 
     def run_hook!(name)
@@ -153,14 +141,6 @@ module TinyCI
 
       @logger.add_output_path logfile_path
       @logger.add_output_path repo_logfile_path
-    end
-
-    def logfile_path
-      File.join(target_path, 'tinyci.log')
-    end
-
-    def repo_logfile_path
-      File.join(builds_path, 'tinyci.log')
     end
 
     # Instantiate the Builder object according to the class named in the config
@@ -204,16 +184,6 @@ module TinyCI
     # Instantiate the {Config} object from the `.tinyci.yml` file in the exported directory
     def config
       @config ||= Config.new(working_dir: export_path)
-    end
-
-    # Parse the commit time from git
-    def commit_time
-      Time.at execute(git_cmd('show', '-s', '--format=%ct', @commit)).to_i
-    end
-
-    # Ensure a path exists
-    def ensure_path(path)
-      execute 'mkdir', '-p', path
     end
 
     # Delete the export path

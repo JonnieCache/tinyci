@@ -48,6 +48,11 @@ module TinyCI
       File.expand_path(execute(git_cmd('rev-parse', '--git-dir')), base)
     end
 
+    # Parse the commit time from git
+    def time
+      @time ||= Time.at execute(git_cmd('show', '-s', '--format=%ct', @commit)).to_i
+    end
+
     # Execute a git command, passing the -C parameter if the current object has
     # the working_directory instance var set
     def git_cmd(*args)
