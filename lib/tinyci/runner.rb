@@ -26,6 +26,8 @@ module TinyCI
     include PathUtils
     include Logging
 
+    CONFIG_FILENAME = '.tinyci.yml'
+
     attr_accessor :builder, :tester, :hooker
 
     # Constructor, allows injection of generic configuration params.
@@ -53,6 +55,12 @@ module TinyCI
     def run!
       begin
         log_info "Commit: #{@commit}"
+
+        unless config_exists?
+          log_error "No config found for #{@commit}"
+
+          return false
+        end
 
         log_info 'Cleaning...'
         clean
@@ -181,9 +189,17 @@ module TinyCI
       klass.new(konfig)
     end
 
-    # Instantiate the {Config} object from the `.tinyci.yml` file in the exported directory
+    def config_path
+      File.expand_path(CONFIG_FILENAME, export_path)
+    end
+
+    def config_exists?
+      file_exists_in_git? CONFIG_FILENAME
+    end
+
+    # The {Config} object from the `.tinyci.yml` file in the exported directory
     def config
-      @config ||= Config.new(working_dir: export_path)
+      @config ||= Config.new(config_path)
     end
 
     # Delete the export path

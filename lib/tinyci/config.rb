@@ -14,6 +14,8 @@ module TinyCI
   class Config
     include Symbolize
 
+    attr_accessor :config_path
+
     # Constructor
     #
     # @param [String] working_dir The working directory in which to find the config file
@@ -21,9 +23,8 @@ module TinyCI
     # @param [String] config Override the config content
     #
     # @raise [ConfigMissingError] if the config file is not found
-    def initialize(working_dir: '.', config_path: nil, config: nil)
-      @working_dir = working_dir
-      @config_pathname = config_path
+    def initialize(config_path, config: nil)
+      @config_path = config_path
       @config_content = config
 
       raise ConfigMissingError, "config file #{config_path} not found" unless config_file_exists?
@@ -46,16 +47,12 @@ module TinyCI
     private
 
     def config_file_exists?
-      File.exist? config_pathname
-    end
-
-    def config_pathname
-      @config_pathname || File.expand_path('.tinyci.yml', @working_dir)
+      File.exist? config_path
     end
 
     def config_content
       @config_content ||= begin
-        config = YAML.safe_load(File.read(config_pathname))
+        config = YAML.safe_load(File.read(config_path))
         transformed_config = ConfigTransformer.new(config).transform!
         symbolize(transformed_config).freeze
       end
