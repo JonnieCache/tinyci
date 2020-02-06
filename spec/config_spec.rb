@@ -26,7 +26,7 @@ RSpec.describe TinyCI::Config do
     }
   end
   context 'old config format' do
-    let(:config) { TinyCI::Config.new(config_path: support_path('test_config.yml')) }
+    let(:config) { TinyCI::Config.new(support_path('test_config.yml')) }
 
     it 'returns the config data' do
       expect(config.to_hash).to eq(correct)
@@ -34,7 +34,7 @@ RSpec.describe TinyCI::Config do
   end
 
   context 'new config format' do
-    let(:config) { TinyCI::Config.new(config_path: support_path('test_config_new.yml')) }
+    let(:config) { TinyCI::Config.new(support_path('test_config_new.yml')) }
 
     it 'returns the config data' do
       expect(config.to_hash).to eq(correct)

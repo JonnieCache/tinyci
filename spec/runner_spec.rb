@@ -7,15 +7,14 @@ require 'tinyci/testers/test_tester'
 RSpec.describe TinyCI::Runner do
   let(:runner) do
     TinyCI::Runner.new(
-      working_dir: repo_path(:single_commit),
-      commit: sha,
+      working_dir: single_commit_repo.path,
+      commit: single_commit_repo.head,
       config: {}
     )
   end
   let(:builder) { TinyCI::Builders::TestBuilder.new(result: true) }
   let(:tester)  { TinyCI::Testers::TestTester.new(result: true) }
-  let(:sha)     { '5c770890e9dd664028c508d1365c6f29443640f5' }
-  before(:each) { extract_repo(:single_commit) }
+  let!(:single_commit_repo) { create_repo_single_commit }
 
   describe 'exporting' do
     it 'exports the right stuff' do
@@ -24,14 +23,14 @@ RSpec.describe TinyCI::Runner do
 
       runner.run!
 
-      builds = Dir.entries(File.join(repo_path(:single_commit), 'builds'))
-      build_dirname = '1506086916_5c770890e9dd664028c508d1365c6f29443640f5'
+      builds = Dir.entries(single_commit_repo.path('builds'))
+      build_dirname = "1577872800_#{single_commit_repo.head}"
       expect(builds.sort).to eq ['.', '..', build_dirname]
 
-      export_path = repo_path(:single_commit, 'builds', build_dirname, 'export')
-      build_content = Dir.entries(export_path)
+      export_path = single_commit_repo.path('builds', build_dirname, 'export')
+      build_content = Dir.entries(export_path).sort
       build_content.reject! { |c| %w[. ..].include? c }
-      expect(build_content).to eq ['file']
+      expect(build_content).to eq ['.tinyci.yml', 'file']
     end
   end
 
@@ -58,18 +57,16 @@ RSpec.describe TinyCI::Runner do
   context 'with config file' do
     let(:runner) do
       TinyCI::Runner.new(
-        working_dir: repo_path(:with_config),
-        commit: sha
+        working_dir: single_commit_repo.path,
+        commit: single_commit_repo.head
       )
     end
-    let(:sha)     { '418b2480c8d2a1252b357f1fe3a1ea7e3e3603b9' }
-    before(:each) { extract_repo(:with_config) }
 
     it 'creates the right builder and tester' do
       runner.run!
 
-      expect(runner.builder).to be_a TinyCI::Builders::TestBuilder
-      expect(runner.tester).to be_a TinyCI::Testers::TestTester
+      expect(runner.builder).to be_a TinyCI::Builders::ScriptBuilder
+      expect(runner.tester).to be_a TinyCI::Testers::ScriptTester
     end
   end
 end

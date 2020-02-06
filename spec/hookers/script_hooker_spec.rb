@@ -41,12 +41,12 @@ RSpec.describe TinyCI::Hookers::ScriptHooker do
   let(:tester_config) { { result: true } }
   let(:runner) do
     TinyCI::Runner.new(
-      working_dir: repo_path(:single_commit),
-      commit: '5c770890e9dd664028c508d1365c6f29443640f5',
+      working_dir: single_commit_repo.path,
+      commit: single_commit_repo.head,
       config: config
     )
   end
-  before(:each) { extract_repo(:single_commit) }
+  let!(:single_commit_repo) { create_repo_single_commit }
 
   def hook_result_path(hook)
     runner.export_path + '/' + hook
@@ -181,7 +181,7 @@ RSpec.describe TinyCI::Hookers::ScriptHooker do
     it 'interpolates' do
       runner.run!
 
-      expect(hook_result_content('/before_build').chomp).to eq '5c770890e9dd664028c508d1365c6f29443640f5'
+      expect(hook_result_content('/before_build').chomp).to eq single_commit_repo.head
     end
   end
 end

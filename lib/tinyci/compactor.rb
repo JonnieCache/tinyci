@@ -24,7 +24,7 @@ module TinyCI
       @logger = logger
       @working_dir = working_dir || repo_root
       @num_builds_to_leave = (num_builds_to_leave || 1).to_i
-      @builds_to_leave = builds_to_leave || []
+      @builds_to_leave = (Array(builds_to_leave) || []).map(&:to_s)
     end
 
     # Compress and delete the build directories
@@ -52,7 +52,7 @@ module TinyCI
       builds.sort!
 
       builds = builds[0..-(@num_builds_to_leave + 1)]
-      builds.reject! { |e| @builds_to_leave.include?(e) || @builds_to_leave.include?(builds_dir(e, 'export')) }
+      builds.reject! { |e| @builds_to_leave.include?(e) || @builds_to_leave.include?(builds_dir(e)) }
 
       builds
     end

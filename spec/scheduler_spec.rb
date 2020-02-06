@@ -8,15 +8,15 @@ RSpec.describe TinyCI::Scheduler do
   let(:runner_class) { class_double('Runner') }
 
   context 'with single commit' do
-    let(:scheduler) { TinyCI::Scheduler.new(working_dir: repo_path(:single_commit), runner_class: runner_class) }
-    before(:each) { extract_repo(:single_commit) }
+    let(:scheduler) { TinyCI::Scheduler.new(working_dir: single_commit_repo.path, runner_class: runner_class) }
+    let!(:single_commit_repo) { create_repo_single_commit }
 
     context 'with working_dir unspecified' do
       let(:scheduler) { TinyCI::Scheduler.new(runner_class: runner_class) }
 
       it 'determines working_dir correctly' do
-        Dir.chdir(File.join(repo_path(:single_commit), '.git')) do
-          expect(scheduler.working_dir).to eq repo_path(:single_commit)
+        Dir.chdir(single_commit_repo.path('.git')) do
+          expect(scheduler.working_dir).to eq single_commit_repo.path.to_s
         end
       end
     end
@@ -25,7 +25,7 @@ RSpec.describe TinyCI::Scheduler do
       mock = instance_double('Runner')
       expect(runner_class).to receive(:new)
         .once.
-        # with(hash_including(commit: '5c770890e9dd664028c508d1365c6f29443640f5')).
+        # with(hash_including(commit: commit_1)).
         and_return(mock)
 
       allow(mock).to receive(:run!).and_return true
@@ -49,15 +49,21 @@ RSpec.describe TinyCI::Scheduler do
 
         scheduler.run!
 
-        note = `git -C #{repo_path(:single_commit)} notes --ref=tinyci-result show 5c770890e9dd664028c508d1365c6f29443640f5`.chomp
+        note = `git -C #{single_commit_repo.path} notes --ref=tinyci-result show #{single_commit_repo.head}`.chomp
         expect(note).to eq 'success'
       end
     end
   end
 
   context 'with two commits' do
-    let(:scheduler) { TinyCI::Scheduler.new(working_dir: repo_path(:two_commits), runner_class: runner_class) }
-    before(:each) { extract_repo(:two_commits) }
+    let(:scheduler) { TinyCI::Scheduler.new(working_dir: repo.path, runner_class: runner_class) }
+    let!(:repo) do
+      create_repo_single_commit(:two_commits).build do |f|
+        f.file 'file', "stuff\nmore stuff"
+        f.add
+        f.commit 'foo'
+      end
+    end
 
     it 'creates two Runners' do
       mock = instance_double('Runner')
@@ -65,13 +71,13 @@ RSpec.describe TinyCI::Scheduler do
 
       expect(runner_class).to receive(:new)
         .once
-        .with(hash_including(commit: '5c770890e9dd664028c508d1365c6f29443640f5'))
+        .with(hash_including(commit: repo.rev('HEAD^1')))
         .and_return(mock)
         .ordered
 
       expect(runner_class).to receive(:new)
         .once
-        .with(hash_including(commit: '8bba70a3f72be8330f6c8c636a0bf166c17313e0'))
+        .with(hash_including(commit: repo.head))
         .and_return(mock2)
         .ordered
 
@@ -97,8 +103,25 @@ RSpec.describe TinyCI::Scheduler do
   end
 
   context 'with three commits, one success' do
-    let(:scheduler) { TinyCI::Scheduler.new(working_dir: repo_path(:three_commits_one_success), runner_class: runner_class) }
-    before(:each) { extract_repo(:three_commits_one_success) }
+    let(:scheduler) { TinyCI::Scheduler.new(working_dir: repo.path, runner_class: runner_class) }
+    let!(:repo) { RepoFactory.new(:three_commits_one_success) }
+    let!(:commit_1) do
+      repo.file 'file', 'stuff'
+      repo.add
+      repo.commit 'init'
+    end
+    let!(:commit_2) do
+      repo.file 'file', 'stuff2'
+      repo.add
+      sha = repo.commit 'more'
+      repo.success sha
+      sha
+    end
+    let!(:commit_3) do
+      repo.file 'file', 'stuff3'
+      repo.add
+      repo.commit 'moar'
+    end
 
     it 'skips the commit with the success note' do
       mock = instance_double('Runner')
@@ -106,13 +129,13 @@ RSpec.describe TinyCI::Scheduler do
 
       expect(runner_class).to receive(:new)
         .once
-        .with(hash_including(commit: '5c770890e9dd664028c508d1365c6f29443640f5'))
+        .with(hash_including(commit: commit_1))
         .and_return(mock)
         .ordered
 
       expect(runner_class).to receive(:new)
         .once
-        .with(hash_including(commit: 'd3139ba6d1c9d974d0caa8b3b29e8ee837309ffb'))
+        .with(hash_including(commit: commit_3))
         .and_return(mock2)
         .ordered
 
@@ -133,13 +156,13 @@ RSpec.describe TinyCI::Scheduler do
 
         expect(runner_class).to receive(:new)
           .once
-          .with(hash_including(commit: '5c770890e9dd664028c508d1365c6f29443640f5'))
+          .with(hash_including(commit: commit_1))
           .and_return(mock)
           .ordered
 
         expect(runner_class).to receive(:new)
           .once
-          .with(hash_including(commit: 'd3139ba6d1c9d974d0caa8b3b29e8ee837309ffb'))
+          .with(hash_including(commit: commit_3))
           .and_return(mock2)
           .ordered do
             barrier.wait
@@ -147,7 +170,7 @@ RSpec.describe TinyCI::Scheduler do
 
         expect(runner_class).to receive(:new)
           .once.
-          # with(hash_including(commit: 'd3139ba6d1c9d974d0caa8b3b29e8ee837309ffb')).
+          # with(hash_including(commit: commit_3)).
           and_return(mock3)
           .ordered
 
@@ -157,9 +180,12 @@ RSpec.describe TinyCI::Scheduler do
 
         scheduler_thread = Thread.new { scheduler.run! }
 
-        File.open(File.join(repo_path(:three_commits_one_success), 'new'), 'w') { |f| f.write 'test' }
-        system("git -C #{repo_path(:three_commits_one_success)} add new")
-        system("git -C #{repo_path(:three_commits_one_success)} commit -m 'new' --quiet")
+        repo.file 'foo', 'bar'
+        repo.add
+        repo.commit 'lol'
+        # File.open(File.join(repo.path, 'new'), 'w') { |f| f.write 'test' }
+        # system("git -C #{repo.path} add new")
+        # system("git -C #{repo.path} commit -m 'new' --quiet")
 
         barrier.wait
         scheduler_thread.join

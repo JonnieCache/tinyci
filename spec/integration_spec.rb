@@ -5,18 +5,12 @@ require 'tinyci/installer'
 RSpec.describe 'Integration' do
   let(:config) do
     <<~CONFIG
-      builder:
-        class: ScriptBuilder
-        config:
-          command: echo LOL
-      tester:
-        class: ScriptTester
-        config:
-          command: echo LOL
+      build: echo LOL
+      test: echo LOL
     CONFIG
   end
   let(:regex) do
-    r = <<~REGEX
+    Regexp.new <<~REGEX
       ^.+Commit:.*$
       ^.+Cleaning\.\.\.\s*$
       ^.+Exporting\.\.\.\s*$
@@ -26,21 +20,20 @@ RSpec.describe 'Integration' do
       ^.+LOL\s*$
       ^.+Finished.*$
     REGEX
-    Regexp.new(r)
   end
 
   def do_commit
     `git -C #{repo_path(:bare_clone)} add .`
     `git -c 'user.name=A' -c 'user.email=author@example.com' -C #{repo_path(:bare_clone)} commit -m 'foo'`
   end
+  let!(:bare_repo) { create_repo_bare }
 
   before(:each) do
-    extract_repo(:bare)
-    TinyCI::Installer.new(working_dir: repo_path(:bare), absolute_path: true).install!
+    TinyCI::Installer.new(working_dir: bare_repo.path, absolute_path: true).install!
 
-    `git clone #{repo_path(:bare)} #{repo_path(:bare_clone)} &> /dev/null`
+    `git clone #{bare_repo.path} #{repo_path(:bare_clone)} &> /dev/null`
 
-    File.write repo_path(:bare_clone) + '/.tinyci.yml', config
+    File.write repo_path(:bare_clone, '.tinyci.yml'), config
     do_commit
   end
 
@@ -56,15 +49,15 @@ RSpec.describe 'Integration' do
       do_commit
     end
 
-    it 'outputs to both log files' do
+    # rarely fails due to some race conditon
+    it 'outputs to both log files', :brittle do
       cmd = "git -C #{repo_path(:bare_clone)} push origin master"
 
       expect { system(cmd) }.to output(regex).to_stderr_from_any_process
 
-      target_dir = Dir.entries(repo_path(:bare, '/builds'))
-                      .reject { |p| %w[. .. tinyci.log].include? p }.sort.last
-      build_log_path = repo_path(:bare, '/builds', target_dir, 'tinyci.log')
-      repo_log_path = repo_path(:bare, '/builds', 'tinyci.log')
+      target_dir = bare_repo.path('builds').children.reject { |p| p.basename.to_s == 'tinyci.log' }.max
+      build_log_path = target_dir.join 'tinyci.log'
+      repo_log_path = bare_repo.path('builds', 'tinyci.log')
 
       expect(File.read(build_log_path)).to match regex
       expect(File.read(repo_log_path)).to match Regexp.new(regex.source + regex.source)
