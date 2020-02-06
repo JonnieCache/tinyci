@@ -10,6 +10,8 @@ SimpleCov.start
 require 'fileutils'
 require 'pry'
 
+require 'support/repo_factory'
+
 Thread.report_on_exception = true
 
 module GitSpecHelper
@@ -23,6 +25,19 @@ module GitSpecHelper
 
   def repo_archive_path(repo)
     File.join REPO_ROOT, "#{repo}.git.tar.gz"
+  end
+
+  def create_repo_single_commit(name = :single_commit)
+    RepoFactory.new(name) do |f|
+      f.stub_config
+      f.file 'file', 'stuff'
+      f.add
+      f.commit 'init', time: Time.new(2020, 1, 1, 10)
+    end
+  end
+
+  def create_repo_bare
+    create_repo_single_commit.build(:bare, &:make_bare)
   end
 
   def support_path(filename)
@@ -60,7 +75,7 @@ RSpec.configure do |config|
     entries = Dir.entries GitSpecHelper::REPO_ROOT
     entries.delete '.'
     entries.delete '..'
-    entries.reject! { |e| e.end_with? '.tar.gz' }.map! { |e| File.join(GitSpecHelper::REPO_ROOT, e) }
+    entries = entries.reject { |e| e.end_with? '.tar.gz' }.map { |e| File.join(GitSpecHelper::REPO_ROOT, e) }
     FileUtils.rm_rf entries
   end
 end

@@ -40,11 +40,8 @@ module TinyCI
     def tail
       File.open(logfile_to_read) do |log|
         log.extend(File::Tail)
-        # log.return_if_eof = true
-        # binding.pry;
 
         log.backward @num_lines if @num_lines
-        # binding.pry;
         log.tail { |line| puts line }
       end
     end

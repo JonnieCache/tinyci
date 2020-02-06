@@ -43,21 +43,33 @@ module TinyCI
 
     # Returns the absolute path to the .git directory
     def git_directory_path
-      base = defined?(@working_dir) ? @working_dir : nil
+      base = defined?(@working_dir) ? @working_dir.to_s : nil
 
       File.expand_path(execute(git_cmd('rev-parse', '--git-dir')), base)
     end
 
+    def file_exists_in_git?(path, ref = @commit)
+      cmd = git_cmd('cat-file', '-e', "#{ref}:#{path}")
+
+      execute_and_return_status(cmd).success?
+    end
+
+    def commit_exists?(commit = @commit)
+      cmd = git_cmd('cat-file', '-e', commit)
+
+      execute_and_return_status(cmd).success?
+    end
+
     # Parse the commit time from git
     def time
-      @time ||= Time.at execute(git_cmd('show', '-s', '--format=%ct', @commit)).to_i
+      @time ||= Time.at execute(git_cmd('show', '-s', '--format=%at', @commit)).to_i
     end
 
     # Execute a git command, passing the -C parameter if the current object has
     # the working_directory instance var set
     def git_cmd(*args)
       cmd = ['git']
-      cmd += ['-C', @working_dir] if defined?(@working_dir) && !@working_dir.nil?
+      cmd += ['-C', @working_dir.to_s] if defined?(@working_dir) && !@working_dir.nil?
       cmd += args
 
       cmd

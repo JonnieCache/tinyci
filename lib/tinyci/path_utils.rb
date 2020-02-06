@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 require 'tinyci/subprocesses'
 require 'tinyci/git_utils'
+require 'fileutils'
 
 module TinyCI
   # Methods for computing paths.
@@ -31,7 +32,7 @@ module TinyCI
 
     # Ensure a path exists
     def ensure_path(path)
-      execute 'mkdir', '-p', path
+      FileUtils.mkdir_p path
     end
 
     def self.included(base)

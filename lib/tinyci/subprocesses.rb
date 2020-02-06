@@ -77,10 +77,17 @@ module TinyCI
 
         raise SubprocessError.new(label, command.join(' '), wait_thr.value) unless wait_thr.value.success?
 
+      ensure
         stdout_and_stderr.close
       end
 
       true
+    end
+
+    def execute_and_return_status(command)
+      system(*command, out: File::NULL, err: File::NULL)
+
+      $?
     end
 
     # An error raised when any of the {Subprocesses} methods fail
