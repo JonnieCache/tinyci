@@ -3,3 +3,5 @@
 --order random
 --format Fuubar
 --format Nc
+--tag ~slow
+--tag ~brittle
