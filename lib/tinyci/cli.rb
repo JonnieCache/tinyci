@@ -5,6 +5,7 @@ require 'tinyci/version'
 require 'tinyci/scheduler'
 require 'tinyci/installer'
 require 'tinyci/compactor'
+require 'tinyci/log_viewer'
 require 'tinyci/git_utils'
 require 'optparse'
 require 'pidfile'
@@ -137,7 +138,7 @@ module TinyCI
         working_dir: opts[:dir],
         follow: opts[:follow],
         num_lines: opts[:num_lines]
-      ).execute!
+      ).view!
     end
 
     def do_version(_opts)
