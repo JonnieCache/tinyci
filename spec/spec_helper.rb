@@ -73,9 +73,7 @@ RSpec.configure do |config|
 
   config.before(:each) do
     entries = Dir.entries GitSpecHelper::REPO_ROOT
-    entries.delete '.'
-    entries.delete '..'
-    entries = entries.reject { |e| e.end_with? '.tar.gz' }.map { |e| File.join(GitSpecHelper::REPO_ROOT, e) }
+    entries = entries.reject { |e| e.start_with? '.' }.map { |e| File.join(GitSpecHelper::REPO_ROOT, e) }
     FileUtils.rm_rf entries
   end
 end

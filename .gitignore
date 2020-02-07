@@ -1,5 +1,6 @@
 doc
 .yardoc
+spec/support/repos/*.git
 spec/examples.txt
 tmp
 pkg
