@@ -37,6 +37,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'file-tail'
   spec.add_dependency 'net-ssh'
+  spec.add_dependency 'git_clone_url'
 
   spec.add_development_dependency 'awesome_print'
   spec.add_development_dependency 'barrier'

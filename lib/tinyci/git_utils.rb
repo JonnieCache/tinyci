@@ -65,6 +65,12 @@ module TinyCI
       @time ||= Time.at execute(git_cmd('show', '-s', '--format=%at', @commit)).to_i
     end
 
+    def push_url(remote)
+      @push_urls ||= {}
+
+      @push_urls[remote] ||= GitCloneUrl.parse execute git_cmd 'remote', 'get-url', '--push', @remote
+    end
+
     # Execute a git command, passing the -C parameter if the current object has
     # the working_directory instance var set
     def git_cmd(*args)

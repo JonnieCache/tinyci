@@ -7,6 +7,7 @@ require 'tinyci/installer'
 require 'tinyci/compactor'
 require 'tinyci/log_viewer'
 require 'tinyci/git_utils'
+require 'tinyci/cli_ssh_delegator'
 require 'optparse'
 require 'pidfile'
 
@@ -89,7 +90,7 @@ module TinyCI
       end
 
       if opts[:remote]
-        do_remote original_argv
+        CLISSHDelegator.new(original_argv, **opts).run!
       else
         send "do_#{command}", opts
       end
