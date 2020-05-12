@@ -14,6 +14,7 @@ module TinyCI
 
     BLOCKSIZE_TO_READ = 1024 * 1000
 
+    #
     # Constructor
     #
     # @param [String] working_dir The directory from which to run.

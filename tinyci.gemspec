@@ -36,8 +36,8 @@ Gem::Specification.new do |spec|
   spec.post_install_message = (LOGO % TinyCI::VERSION) + "\n"
 
   spec.add_dependency 'file-tail'
-  spec.add_dependency 'net-ssh'
   spec.add_dependency 'git_clone_url'
+  spec.add_dependency 'net-ssh'
 
   spec.add_development_dependency 'awesome_print'
   spec.add_development_dependency 'barrier'

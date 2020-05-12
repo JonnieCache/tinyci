@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'open3'
+require 'English'
 require 'tinyci/logging'
 
 module TinyCI
@@ -14,18 +15,20 @@ module TinyCI
     # @return [String] The output of the command
     # @raise [SubprocessError] if the subprocess returns status > 0
     def execute(*command, label: nil)
-      output, status = Open3.capture2(*command.flatten)
+      stdout, stderr, status = Open3.capture3(*command.flatten)
 
       log_debug caller[0]
       log_debug "CMD: #{command.join(' ')}"
-      log_debug "OUT: #{output}"
+      log_debug "OUT: #{stdout}"
+      log_debug "ERR: #{stderr}"
 
       unless status.success?
-        log_error output
+        log_error stdout
+        log_error stderr
         raise SubprocessError.new(label, command.join(' '), status)
       end
 
-      output.chomp
+      stdout.chomp
     end
 
     # Synchronously execute a chain multiple commands piped into each other as a
@@ -75,7 +78,9 @@ module TinyCI
           $stdout.flush
         end
 
-        raise SubprocessError.new(label, command.join(' '), wait_thr.value) unless wait_thr.value.success?
+        unless wait_thr.value.success?
+          raise SubprocessError.new(label, command.join(' '), wait_thr.value)
+        end
 
       ensure
         stdout_and_stderr.close
@@ -87,7 +92,7 @@ module TinyCI
     def execute_and_return_status(command)
       system(*command, out: File::NULL, err: File::NULL)
 
-      $?
+      $CHILD_STATUS
     end
 
     # An error raised when any of the {Subprocesses} methods fail

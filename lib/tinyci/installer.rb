@@ -10,7 +10,8 @@ module TinyCI
 
     # Constructor
     #
-    # @param [String] working_dir The directory from which to run. Does not have to be the root of the repo
+    # @param [String] working_dir The directory from which to run. Does not have to be the
+    # root of the repo.
     # @param [Logger] logger Logger object
     def initialize(working_dir: nil, logger: nil, absolute_path: false)
       @logger = logger

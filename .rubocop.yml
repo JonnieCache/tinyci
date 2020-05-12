@@ -5,7 +5,8 @@ AllCops:
   TargetRubyVersion: 2.5
 
 Layout/LineLength:
-  Max: 120
+  Max: 100
+  AutoCorrect: true
 
 Metrics/BlockLength:
   ExcludedMethods: ['describe', 'context']

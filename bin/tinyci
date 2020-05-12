@@ -6,6 +6,6 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 require 'tinyci/cli'
 
-result = TinyCI::CLI.parse!
+result = TinyCI::CLI.new.parse!
 
 exit result ? 1 : 0

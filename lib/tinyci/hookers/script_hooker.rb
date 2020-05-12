@@ -44,15 +44,12 @@ module TinyCI
 
             return true
           rescue SubprocessError => e
-            if BLOCKING_HOOKS.include? hook
-              raise e if ENV['TINYCI_ENV'] == 'test'
+            return true unless BLOCKING_HOOKS.include? hook
 
-              log_error e
+            raise e if ENV['TINYCI_ENV'] == 'test'
 
-              return false
-            else
-              return true
-            end
+            log_error e
+            return false
           end
         end
       end

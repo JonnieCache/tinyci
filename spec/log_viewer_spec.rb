@@ -6,7 +6,7 @@ require 'tinyci/multi_logger'
 require 'tinyci/scheduler'
 
 RSpec.describe TinyCI::LogViewer do
-  let(:log_viewer) { TinyCI::LogViewer.new({ working_dir: repo.path }.merge(opts)) }
+  let(:log_viewer) { TinyCI::LogViewer.new(**{ working_dir: repo.path }.merge(opts)) }
   let(:opts) { {} }
   let(:regex) do
     r = <<~REGEX
@@ -23,14 +23,14 @@ RSpec.describe TinyCI::LogViewer do
   end
   let!(:repo) do
     RepoFactory.new(:with_log) do |f|
-      f.file '.tinyci.log', <<~CONFIG
+      f.file '.tinyci.yml', <<~CONFIG
         build: echo LOL
         test: echo LMAO
       CONFIG
       f.add
       f.commit 'init', time: Time.new(2020, 1, 1, 10)
 
-      f.file '.tinyci.log', <<~CONFIG
+      f.file '.tinyci.yml', <<~CONFIG
         build: echo LOL
         test: echo LMAO && false
       CONFIG
@@ -80,7 +80,7 @@ RSpec.describe TinyCI::LogViewer do
     end
   end
 
-  context 'with a specific commit' do
+  describe 'with a specific commit' do
     let(:opts) { { commit: repo.rev('HEAD^1') } }
 
     it 'prints the log' do
@@ -118,7 +118,7 @@ RSpec.describe TinyCI::LogViewer do
     end
   end
 
-  context 'all commits' do
+  describe 'all commits' do
     let(:regex) do
       r = <<~REGEX
         ^.+Commit:.*$
@@ -228,6 +228,20 @@ RSpec.describe TinyCI::LogViewer do
         end.to output(regex).to_stdout
         t.join
       end
+    end
+  end
+
+  describe 'with no logs' do
+    let!(:repo) { create_repo_single_commit }
+
+    it 'doesnt throw an exception' do
+      allow(Warning).to receive :warn
+
+      expect { log_viewer.view! }.to_not raise_error
+    end
+
+    it 'prints a message' do
+      expect { log_viewer.view! }.to output(/Logfile does not exist/).to_stderr
     end
   end
 end

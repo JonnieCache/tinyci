@@ -19,14 +19,6 @@ module GitSpecHelper
   SUPPORT_ROOT = File.expand_path('spec/support', PROJECT_ROOT)
   REPO_ROOT = File.expand_path('repos', SUPPORT_ROOT)
 
-  def extract_repo(repo)
-    system 'tar', '-xzf', repo_archive_path(repo), '-C', REPO_ROOT
-  end
-
-  def repo_archive_path(repo)
-    File.join REPO_ROOT, "#{repo}.git.tar.gz"
-  end
-
   def create_repo_single_commit(name = :single_commit)
     RepoFactory.new(name) do |f|
       f.stub_config

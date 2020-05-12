@@ -212,7 +212,8 @@ module TinyCI
     # a `git export` subcommand.
     # see https://stackoverflow.com/a/163769
     def export
-      execute_pipe git_cmd('archive', '--format=tar', @commit), ['tar', '-C', export_path, '-xf', '-']
+      execute_pipe git_cmd('archive', '--format=tar',
+                           @commit), ['tar', '-C', export_path, '-xf', '-']
     end
   end
 end

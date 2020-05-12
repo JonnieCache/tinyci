@@ -6,17 +6,30 @@ require 'fileutils'
 class RepoFactory
   include TinyCI::PathUtils
   include TinyCI::GitUtils
+  extend TinyCI::GitUtils
 
   SUPPORT_ROOT = __dir__
 
   attr_reader :name
 
-  def initialize(name, &block)
+  def initialize(name, init: true, &block)
     @name = name
     @working_dir = path
-    init
+    self.init if init
 
     build(&block) if block
+  end
+
+  def self.clone(name, upstream_url, &block)
+    clone = RepoFactory.new(name, init: false)
+    execute git_cmd 'clone', upstream_url.to_s, clone.path.to_s
+
+    clone.build(&block) if block
+    clone
+  end
+
+  def clone(&block)
+    RepoFactory.clone("#{name}_clone", path, &block)
   end
 
   def name=(new_name)
@@ -54,6 +67,10 @@ class RepoFactory
     file.close
   end
 
+  def rm(file_path)
+    FileUtils.rm path(file_path)
+  end
+
   def stub_config
     file('.tinyci.yml') do |c|
       c.puts "build: 'true'"
@@ -82,6 +99,11 @@ class RepoFactory
     head
   end
 
+  def add_remote(remote_name, url)
+    execute git_cmd 'remote', 'add', remote_name, url
+    # execute git_cmd 'branch', '--set-upstream-to', "#{remote_name}/#{current_branch}"
+  end
+
   def success(sha)
     mark_result sha, true
   end
@@ -93,6 +115,10 @@ class RepoFactory
   def mark_result(sha, result)
     result_message = result ? 'success' : 'failure'
     execute git_cmd 'notes', '--ref', 'tinyci-result', 'add', '-m', result_message, sha
+  end
+
+  def set_remote_url(remote, url)
+    execute git_cmd 'remote', 'set-url', remote, url
   end
 
   def head
