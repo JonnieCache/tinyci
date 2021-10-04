@@ -48,7 +48,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'pry-byebug'
   spec.add_development_dependency 'pry-doc'
   spec.add_development_dependency 'rake'
-  spec.add_development_dependency 'redcarpet'
+  spec.add_development_dependency 'redcarpet', '>= 3.5.1'
   spec.add_development_dependency 'rspec', '>= 3.8.0'
   spec.add_development_dependency 'rspec-nc'
   spec.add_development_dependency 'rubocop'

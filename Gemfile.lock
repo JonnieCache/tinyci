@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    tinyci (0.5)
+    tinyci (0.5.1)
       file-tail
       git_clone_url
       net-ssh
@@ -68,7 +68,7 @@ GEM
     rb-fsevent (0.11.0)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    redcarpet (3.4.0)
+    redcarpet (3.5.1)
     rspec (3.9.0)
       rspec-core (~> 3.9.0)
       rspec-expectations (~> 3.9.0)
@@ -121,7 +121,7 @@ DEPENDENCIES
   pry-byebug
   pry-doc
   rake
-  redcarpet
+  redcarpet (>= 3.5.1)
   rspec (>= 3.8.0)
   rspec-nc
   rubocop
