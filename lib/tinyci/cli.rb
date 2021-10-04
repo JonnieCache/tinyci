@@ -27,12 +27,12 @@ module TinyCI
 
     def parse!
       if @argv[0] == '--help'
-        puts BANNER
+        puts banner
         return false
       end
 
       unless subcommand
-        puts BANNER
+        puts banner
         return false
       end
 
