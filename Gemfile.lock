@@ -106,7 +106,7 @@ GEM
       sync
     unicode-display_width (1.6.1)
     uri-ssh_git (2.0.0)
-    yard (0.9.24)
+    yard (0.9.36)
 
 PLATFORMS
   ruby
